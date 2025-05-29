@@ -1,8 +1,8 @@
 "use client"; // Enable client-side functionality
-import Image from "next/image";
+
 import { useState } from "react";
 // Import your custom components (to be created)
-import SingleRegistration from "@/components/individual/page.tsx";
+import SingleRegistration from "@/components/individual/page";
 import BulkRegistration from "@/components/bulkRegistration/page";
 import BoothRegistration from "@/components/boothRegistration/page";
 

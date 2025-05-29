@@ -2,12 +2,12 @@
 
 import { useState } from "react";
 
-type BoothOption = {
-  id: string;
-  name: string;
-  price: string;
-  description: string;
-};
+// type BoothOption = {
+//   id: string;
+//   name: string;
+//   price: string;
+//   description: string;
+// };
 
 export default function BoothRegistration() {
   // State for form fields
