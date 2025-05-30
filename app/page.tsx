@@ -40,7 +40,9 @@ export default function Home() {
       <div className="w-full flex justify-center mb-8">
         <div className="text-center text-white">
           <h2 className="text-3xl font-bold mb-2">29 - 30 July 2025</h2>
-          <h3 className="text-2xl">The Wanderers Club</h3>
+          <h3 className="text-2xl">
+            The Wanderers Club 21 North Street, Illovo, Johannesburg
+          </h3>
           <h3 className="text-2xl">9am until 4pm</h3>
         </div>
       </div>

@@ -8,9 +8,12 @@ export default function BulkRegistration() {
 
   // State for form fields
   const [schoolName, setSchoolName] = useState<string>("");
+  const [vatNumber, setVatNumber] = useState<string>(""); // Added VAT number state
   const [contactPersonName, setContactPersonName] = useState<string>("");
   const [contactPersonEmail, setContactPersonEmail] = useState<string>("");
   const [contactPersonPhone, setContactPersonPhone] = useState<string>("");
+
+  const [selectedDate, setSelectedDate] = useState<string>("");
 
   // Member and non-member states
   const [memberStudents, setMemberStudents] = useState<number>(0);
@@ -25,8 +28,8 @@ export default function BulkRegistration() {
     let totalCost = 0;
 
     if (organizationType === "highschool") {
-      const studentCost = 110 * (memberStudents + nonMemberStudents);
-      const teacherCost = 150 * (memberTeachers + nonMemberTeachers);
+      const studentCost = 110 * memberStudents;
+      const teacherCost = 150 * memberTeachers;
       totalCost =
         (studentCost + teacherCost) * (numberOfDays === "two" ? 2 : 1);
     } else if (organizationType === "culinary") {
@@ -67,9 +70,17 @@ export default function BulkRegistration() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validate date selection for one day option
+    if (numberOfDays === "one" && !selectedDate) {
+      alert("Please select a date");
+      return;
+    }
+
     console.log("Form submitted", {
       organizationType,
       schoolName,
+      vatNumber,
       contactPersonName,
       contactPersonEmail,
       contactPersonPhone,
@@ -78,11 +89,12 @@ export default function BulkRegistration() {
       memberTeachers,
       nonMemberTeachers,
       numberOfDays,
+      selectedDate:
+        numberOfDays === "one" ? `${selectedDate} May 2025` : "Both days",
       totalCost,
     });
     alert("Bulk registration submitted successfully!");
   };
-
   return (
     <div className="w-full max-w-4xl mx-auto">
       <form onSubmit={handleSubmit} className="space-y-8">
@@ -225,6 +237,25 @@ export default function BulkRegistration() {
                 />
               </div>
 
+              {organizationType === "company" && (
+                <div className="md:col-span-2">
+                  <label
+                    htmlFor="vatNumber"
+                    className="block text-sm font-medium mb-1"
+                  >
+                    VAT Number
+                  </label>
+                  <input
+                    type="text"
+                    id="vatNumber"
+                    value={vatNumber}
+                    onChange={(e) => setVatNumber(e.target.value)}
+                    className="w-full p-2 border rounded-md"
+                    required
+                  />
+                </div>
+              )}
+
               <div>
                 <label
                   htmlFor="contactPersonName"
@@ -276,63 +307,89 @@ export default function BulkRegistration() {
                 />
               </div>
 
-              <div>
-                <label
-                  htmlFor="memberStudents"
-                  className="block text-sm font-medium mb-1"
-                >
-                  Number of{" "}
-                  {organizationType === "company"
-                    ? "Members"
-                    : "Student Members"}
-                </label>
-                <input
-                  type="number"
-                  id="memberStudents"
-                  min="0"
-                  value={memberStudents}
-                  onChange={(e) =>
-                    setMemberStudents(parseInt(e.target.value) || 0)
-                  }
-                  className="w-full p-2 border rounded-md"
-                />
-              </div>
-
-              <div>
-                <label
-                  htmlFor="nonMemberStudents"
-                  className="block text-sm font-medium mb-1"
-                >
-                  Number of{" "}
-                  {organizationType === "company"
-                    ? "Non-Members"
-                    : "Student Non-Members"}
-                </label>
-                <input
-                  type="number"
-                  id="nonMemberStudents"
-                  min="0"
-                  value={nonMemberStudents}
-                  onChange={(e) =>
-                    setNonMemberStudents(parseInt(e.target.value) || 0)
-                  }
-                  className="w-full p-2 border rounded-md"
-                />
-              </div>
-
-              {(organizationType === "highschool" ||
-                organizationType === "culinary") && (
+              {organizationType === "highschool" ? (
                 <>
+                  <div>
+                    <label
+                      htmlFor="memberStudents"
+                      className="block text-sm font-medium mb-1"
+                    >
+                      Number of Scholars attending
+                    </label>
+                    <input
+                      type="number"
+                      id="memberStudents"
+                      min="0"
+                      value={memberStudents}
+                      onChange={(e) =>
+                        setMemberStudents(parseInt(e.target.value) || 0)
+                      }
+                      className="w-full p-2 border rounded-md"
+                    />
+                  </div>
                   <div>
                     <label
                       htmlFor="memberTeachers"
                       className="block text-sm font-medium mb-1"
                     >
-                      Number of{" "}
-                      {organizationType === "highschool"
-                        ? "Teacher"
-                        : "Supervisor"}{" "}
-                      Members
+                      Number of Teachers/Staff Members attending
+                    </label>
+                    <input
+                      type="number"
+                      id="memberTeachers"
+                      min="0"
+                      value={memberTeachers}
+                      onChange={(e) =>
+                        setMemberTeachers(parseInt(e.target.value) || 0)
+                      }
+                      className="w-full p-2 border rounded-md"
+                    />
+                  </div>
+                </>
+              ) : organizationType === "culinary" ? (
+                <>
+                  <div>
+                    <label
+                      htmlFor="memberStudents"
+                      className="block text-sm font-medium mb-1"
+                    >
+                      Number of Students attending (SA Chefs member)
+                    </label>
+                    <input
+                      type="number"
+                      id="memberStudents"
+                      min="0"
+                      value={memberStudents}
+                      onChange={(e) =>
+                        setMemberStudents(parseInt(e.target.value) || 0)
+                      }
+                      className="w-full p-2 border rounded-md"
+                    />
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="nonMemberStudents"
+                      className="block text-sm font-medium mb-1"
+                    >
+                      Number of Students attending (non-member)
+                    </label>
+                    <input
+                      type="number"
+                      id="nonMemberStudents"
+                      min="0"
+                      value={nonMemberStudents}
+                      onChange={(e) =>
+                        setNonMemberStudents(parseInt(e.target.value) || 0)
+                      }
+                      className="w-full p-2 border rounded-md"
+                    />
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="memberTeachers"
+                      className="block text-sm font-medium mb-1"
+                    >
+                      Number of Staff attending (SA Chefs member)
                     </label>
                     <input
                       type="number"
@@ -350,11 +407,7 @@ export default function BulkRegistration() {
                       htmlFor="nonMemberTeachers"
                       className="block text-sm font-medium mb-1"
                     >
-                      Number of{" "}
-                      {organizationType === "highschool"
-                        ? "Teacher"
-                        : "Supervisor"}{" "}
-                      Non-Members
+                      Number of Staff attending (non-member)
                     </label>
                     <input
                       type="number"
@@ -363,6 +416,45 @@ export default function BulkRegistration() {
                       value={nonMemberTeachers}
                       onChange={(e) =>
                         setNonMemberTeachers(parseInt(e.target.value) || 0)
+                      }
+                      className="w-full p-2 border rounded-md"
+                    />
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div>
+                    <label
+                      htmlFor="memberStudents"
+                      className="block text-sm font-medium mb-1"
+                    >
+                      Number of attendees (SA Chefs Member)
+                    </label>
+                    <input
+                      type="number"
+                      id="memberStudents"
+                      min="0"
+                      value={memberStudents}
+                      onChange={(e) =>
+                        setMemberStudents(parseInt(e.target.value) || 0)
+                      }
+                      className="w-full p-2 border rounded-md"
+                    />
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="nonMemberStudents"
+                      className="block text-sm font-medium mb-1"
+                    >
+                      Number of attendees (non-member)
+                    </label>
+                    <input
+                      type="number"
+                      id="nonMemberStudents"
+                      min="0"
+                      value={nonMemberStudents}
+                      onChange={(e) =>
+                        setNonMemberStudents(parseInt(e.target.value) || 0)
                       }
                       className="w-full p-2 border rounded-md"
                     />
@@ -377,30 +469,71 @@ export default function BulkRegistration() {
         {organizationType && (
           <div className="border rounded-lg p-6 bg-gray-50">
             <h2 className="text-xl font-bold mb-4">Attendance Options</h2>
-            <div>
-              <p className="block text-sm font-medium mb-2">Number of Days</p>
-              <div className="flex gap-4">
-                <label className="flex items-center">
-                  <input
-                    type="radio"
-                    name="days"
-                    checked={numberOfDays === "one"}
-                    onChange={() => setNumberOfDays("one")}
-                    className="mr-2"
-                  />
-                  <span>One Day</span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                    type="radio"
-                    name="days"
-                    checked={numberOfDays === "two"}
-                    onChange={() => setNumberOfDays("two")}
-                    className="mr-2"
-                  />
-                  <span>Two Days</span>
-                </label>
+            <div className="space-y-4">
+              <div>
+                <p className="block text-sm font-medium mb-2">Number of Days</p>
+                <div className="flex gap-4">
+                  <label className="flex items-center">
+                    <input
+                      type="radio"
+                      name="days"
+                      checked={numberOfDays === "one"}
+                      onChange={() => {
+                        setNumberOfDays("one");
+                        setSelectedDate("");
+                      }}
+                      className="mr-2"
+                    />
+                    <span>One Day</span>
+                  </label>
+                  <label className="flex items-center">
+                    <input
+                      type="radio"
+                      name="days"
+                      checked={numberOfDays === "two"}
+                      onChange={() => {
+                        setNumberOfDays("two");
+                        setSelectedDate("");
+                      }}
+                      className="mr-2"
+                    />
+                    <span>Two Days</span>
+                  </label>
+                </div>
               </div>
+
+              {/* Date Selection for One Day Option */}
+              {numberOfDays === "one" && (
+                <div>
+                  <p className="block text-sm font-medium mb-2">Select Date</p>
+                  <div className="flex gap-4">
+                    <label className="flex items-center">
+                      <input
+                        type="radio"
+                        name="date"
+                        value="29"
+                        checked={selectedDate === "29"}
+                        onChange={(e) => setSelectedDate(e.target.value)}
+                        className="mr-2"
+                        required
+                      />
+                      <span>29 May 2025</span>
+                    </label>
+                    <label className="flex items-center">
+                      <input
+                        type="radio"
+                        name="date"
+                        value="30"
+                        checked={selectedDate === "30"}
+                        onChange={(e) => setSelectedDate(e.target.value)}
+                        className="mr-2"
+                        required
+                      />
+                      <span>30 May 2025</span>
+                    </label>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -416,14 +549,13 @@ export default function BulkRegistration() {
               {memberStudents > 0 && (
                 <div className="flex justify-between items-center">
                   <span>
-                    {memberStudents} Member{" "}
-                    {memberStudents === 1
-                      ? organizationType === "company"
-                        ? "attendee"
-                        : "student"
-                      : organizationType === "company"
-                      ? "attendees"
-                      : "students"}
+                    {memberStudents}{" "}
+                    {organizationType === "highschool"
+                      ? "Scholar"
+                      : organizationType === "culinary"
+                      ? "Student (SA Chefs member)"
+                      : "Attendee (SA Chefs member)"}
+                    {memberStudents !== 1 && "s"}
                   </span>
                   <span className="font-medium">
                     R
@@ -437,14 +569,11 @@ export default function BulkRegistration() {
               {nonMemberStudents > 0 && (
                 <div className="flex justify-between items-center">
                   <span>
-                    {nonMemberStudents} Non-Member{" "}
-                    {nonMemberStudents === 1
-                      ? organizationType === "company"
-                        ? "attendee"
-                        : "student"
-                      : organizationType === "company"
-                      ? "attendees"
-                      : "students"}
+                    {nonMemberStudents}{" "}
+                    {organizationType === "culinary"
+                      ? "Student (non-member)"
+                      : "Attendee (non-member)"}
+                    {nonMemberStudents !== 1 && "s"}
                   </span>
                   <span className="font-medium">
                     R
@@ -458,10 +587,10 @@ export default function BulkRegistration() {
               {memberTeachers > 0 && (
                 <div className="flex justify-between items-center">
                   <span>
-                    {memberTeachers} Member{" "}
+                    {memberTeachers}{" "}
                     {organizationType === "highschool"
-                      ? "teacher"
-                      : "supervisor"}
+                      ? "Teacher/Staff Member"
+                      : "Staff (SA Chefs member)"}
                     {memberTeachers !== 1 && "s"}
                   </span>
                   <span className="font-medium">
@@ -476,10 +605,10 @@ export default function BulkRegistration() {
               {nonMemberTeachers > 0 && (
                 <div className="flex justify-between items-center">
                   <span>
-                    {nonMemberTeachers} Non-Member{" "}
+                    {nonMemberTeachers}{" "}
                     {organizationType === "highschool"
-                      ? "teacher"
-                      : "supervisor"}
+                      ? "Teacher/Staff Member"
+                      : "Staff (non-member)"}
                     {nonMemberTeachers !== 1 && "s"}
                   </span>
                   <span className="font-medium">
@@ -493,7 +622,13 @@ export default function BulkRegistration() {
 
               <div className="flex justify-between items-center pt-2 border-t border-blue-200 text-lg">
                 <span>
-                  Total ({numberOfDays === "two" ? "two days" : "one day"})
+                  Total (
+                  {numberOfDays === "two"
+                    ? "two days"
+                    : selectedDate
+                    ? `${selectedDate} May 2025`
+                    : "one day"}
+                  )
                 </span>
                 <span className="font-bold">R{totalCost.toFixed(2)}</span>
               </div>

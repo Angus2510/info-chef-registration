@@ -60,7 +60,6 @@ export default function BoothRegistration() {
 
             <div className="grid gap-3">
               {[
-                { size: "9sqm", price: "15,000.00", tickets: 2 },
                 { size: "6sqm", price: "12,000.00", tickets: 2 },
                 { size: "4sqm", price: "10,000.00", tickets: 1 },
                 { size: "2sqm", price: "6,000.00", tickets: 1 },

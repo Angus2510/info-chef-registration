@@ -210,7 +210,9 @@ export default function IndividualRegistration() {
                     onChange={() => setAttendeeType("student")}
                   />
                   <div>
-                    <p className="font-medium">Culinary Student</p>
+                    <p className="font-medium">
+                      Culinary or Hospitality Student
+                    </p>
                     <p className="text-gray-600 text-sm">
                       Rate depends on membership
                     </p>
