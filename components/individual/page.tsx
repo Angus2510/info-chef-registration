@@ -2,6 +2,12 @@
 
 import { useState, useEffect } from "react";
 
+interface PricingOption {
+  id: string;
+  label: string;
+  price: number;
+}
+
 export default function IndividualRegistration() {
   // Personal information
   const [name, setName] = useState<string>("");
@@ -14,33 +20,56 @@ export default function IndividualRegistration() {
   const [attendeeType, setAttendeeType] = useState<string>("");
   const [isMember, setIsMember] = useState<boolean>(false);
   const [numberOfDays, setNumberOfDays] = useState<"one" | "two">("one");
-
-  // Total price
+  const [selectedPricing, setSelectedPricing] = useState<string>("");
+  const [pricingOptions, setPricingOptions] = useState<PricingOption[]>([]);
   const [totalPrice, setTotalPrice] = useState<number>(0);
 
-  // Calculate price when selections change
+  // Generate pricing options when selections change
   useEffect(() => {
-    let price = 0;
+    const options: PricingOption[] = [];
 
     if (attendeeType === "scholar") {
-      price = 110; // R110 per day for scholars
-      if (numberOfDays === "two") {
-        price *= 2;
-      }
+      options.push({
+        id: `scholar-${numberOfDays}`,
+        label: `High School Scholar - ${
+          numberOfDays === "one" ? "One Day" : "Two Days"
+        }`,
+        price: numberOfDays === "one" ? 110 : 220,
+      });
     } else if (attendeeType === "student" || attendeeType === "general") {
-      if (isMember) {
-        price = numberOfDays === "one" ? 110 : 200; // Member rates
-      } else {
-        price = numberOfDays === "one" ? 150 : 250; // Non-member rates
-      }
+      const typeLabel =
+        attendeeType === "student" ? "Culinary Student" : "General Admission";
+      const basePrice = isMember ? 110 : 150;
+      const twoDayPrice = isMember ? 200 : 250;
+
+      options.push({
+        id: `${attendeeType}-${numberOfDays}-${
+          isMember ? "member" : "nonmember"
+        }`,
+        label: `${typeLabel} - ${
+          numberOfDays === "one" ? "One Day" : "Two Days"
+        } ${isMember ? "(Member)" : "(Non-member)"}`,
+        price: numberOfDays === "one" ? basePrice : twoDayPrice,
+      });
     }
 
-    setTotalPrice(price);
+    setPricingOptions(options);
+    setSelectedPricing("");
   }, [attendeeType, isMember, numberOfDays]);
+
+  // Update total price when pricing selection changes
+  useEffect(() => {
+    const selected = pricingOptions.find(
+      (option) => option.id === selectedPricing
+    );
+    setTotalPrice(selected?.price || 0);
+  }, [selectedPricing, pricingOptions]);
 
   // Handle form submission
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!selectedPricing) return;
+
     console.log("Registration submitted", {
       name,
       idNumber,
@@ -50,6 +79,7 @@ export default function IndividualRegistration() {
       attendeeType,
       isMember,
       numberOfDays,
+      selectedPricing,
       totalPrice,
     });
     alert("Registration submitted successfully!");
@@ -296,12 +326,44 @@ export default function IndividualRegistration() {
             </div>
           )}
 
+          {/* Pricing Selection */}
+          {pricingOptions.length > 0 && (
+            <div className="mt-6">
+              <h3 className="text-lg font-semibold mb-3">Select Your Ticket</h3>
+              <div className="space-y-3">
+                {pricingOptions.map((option) => (
+                  <div
+                    key={option.id}
+                    className="bg-white p-4 rounded-md border hover:border-blue-500 transition-colors"
+                  >
+                    <label className="flex items-center w-full cursor-pointer">
+                      <input
+                        type="radio"
+                        name="pricingOption"
+                        value={option.id}
+                        checked={selectedPricing === option.id}
+                        onChange={() => setSelectedPricing(option.id)}
+                        className="mr-3"
+                        required
+                      />
+                      <div className="flex justify-between w-full">
+                        <span className="font-medium">{option.label}</span>
+                        <span className="font-bold text-green-700">
+                          R{option.price.toFixed(2)}
+                        </span>
+                      </div>
+                    </label>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Pricing Information */}
           <div className="mt-8 bg-blue-50 p-4 rounded-md border border-blue-200">
             <h3 className="text-lg font-semibold mb-2">
               InfoChef Gauteng 2025 Pricing
             </h3>
-
             <div className="space-y-3 text-sm">
               <div>
                 <p className="font-medium">1. Scholar (High School)</p>
@@ -342,20 +404,15 @@ export default function IndividualRegistration() {
         </div>
 
         {/* Order Summary */}
-        {attendeeType && (
+        {selectedPricing && (
           <div className="border rounded-lg p-6 bg-blue-50 shadow-sm">
             <h2 className="text-xl font-bold mb-4">Order Summary</h2>
             <div className="flex justify-between items-center text-lg">
               <span>
-                {attendeeType === "scholar"
-                  ? "High School Scholar"
-                  : attendeeType === "student"
-                  ? "Culinary Student"
-                  : "General Admission"}
-                {" - "}
-                {numberOfDays === "two" ? "Two Days" : "One Day"}
-                {(attendeeType === "student" || attendeeType === "general") &&
-                  (isMember ? " (Member)" : " (Non-member)")}
+                {
+                  pricingOptions.find((option) => option.id === selectedPricing)
+                    ?.label
+                }
               </span>
               <span className="font-bold">R{totalPrice.toFixed(2)}</span>
             </div>
@@ -370,7 +427,7 @@ export default function IndividualRegistration() {
           <button
             type="submit"
             className="bg-blue-600 text-white py-3 px-8 rounded-md hover:bg-blue-700 text-lg font-medium disabled:bg-gray-400"
-            disabled={!attendeeType}
+            disabled={!selectedPricing}
           >
             Submit Registration
           </button>
