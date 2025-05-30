@@ -23,15 +23,15 @@ export default function BulkRegistration() {
   const [nonMemberTeachers, setNonMemberTeachers] = useState<number>(0);
 
   const [numberOfDays, setNumberOfDays] = useState<"one" | "two">("one");
-  const [totalCost, setTotalCost] = useState<number>(0);
+  const [totalPrice, setTotalPrice] = useState<number>(0);
 
   useEffect(() => {
-    let totalCost = 0;
+    let totalPrice = 0;
 
     if (organizationType === "highschool") {
       const studentCost = 110 * memberStudents;
       const teacherCost = 150 * memberTeachers;
-      totalCost =
+      totalPrice =
         (studentCost + teacherCost) * (numberOfDays === "two" ? 2 : 1);
     } else if (organizationType === "culinary") {
       // Member students
@@ -47,7 +47,7 @@ export default function BulkRegistration() {
       const nonMemberTeacherCost =
         nonMemberTeachers * (numberOfDays === "one" ? 200 : 300);
 
-      totalCost =
+      totalPrice =
         memberStudentCost +
         nonMemberStudentCost +
         memberTeacherCost +
@@ -56,10 +56,10 @@ export default function BulkRegistration() {
       const memberCost = memberStudents * (numberOfDays === "one" ? 110 : 200);
       const nonMemberCost =
         nonMemberStudents * (numberOfDays === "one" ? 150 : 250);
-      totalCost = memberCost + nonMemberCost;
+      totalPrice = memberCost + nonMemberCost;
     }
 
-    setTotalCost(totalCost);
+    setTotalPrice(totalPrice);
   }, [
     organizationType,
     memberStudents,
@@ -92,7 +92,7 @@ export default function BulkRegistration() {
       numberOfDays,
       selectedDate:
         numberOfDays === "one" ? `${selectedDate} May 2025` : "Both days",
-      totalCost,
+      totalPrice,
     });
     alert("Bulk registration submitted successfully!");
   };
@@ -631,7 +631,7 @@ export default function BulkRegistration() {
                     : "one day"}
                   )
                 </span>
-                <span className="font-bold">R{totalCost.toFixed(2)}</span>
+                <span className="font-bold">R{totalPrice.toFixed(2)}</span>
               </div>
             </div>
             <p className="text-sm text-gray-600 mt-2">
@@ -659,9 +659,9 @@ export default function BulkRegistration() {
                 numberOfDays === "one"
                   ? `${selectedDate} May 2025`
                   : "Both days",
-              totalCost,
+              totalPrice,
             }}
-            totalPrice={totalCost}
+            totalPrice={totalPrice}
             formType="bulk"
           />
         </div>

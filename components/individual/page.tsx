@@ -24,6 +24,7 @@ export default function IndividualRegistration() {
   const [selectedPricing, setSelectedPricing] = useState<string>("");
   const [pricingOptions, setPricingOptions] = useState<PricingOption[]>([]);
   const [totalPrice, setTotalPrice] = useState<number>(0);
+  const [selectedDate, setSelectedDate] = useState<string>("");
 
   // Generate pricing options when selections change
   useEffect(() => {
@@ -71,6 +72,12 @@ export default function IndividualRegistration() {
     e.preventDefault();
     if (!selectedPricing) return;
 
+    // Validate date selection for one day option
+    if (numberOfDays === "one" && !selectedDate) {
+      alert("Please select a date");
+      return;
+    }
+
     console.log("Registration submitted", {
       name,
       idNumber,
@@ -80,12 +87,13 @@ export default function IndividualRegistration() {
       attendeeType,
       isMember,
       numberOfDays,
+      selectedDate:
+        numberOfDays === "one" ? `${selectedDate} May 2025` : "Both days",
       selectedPricing,
       totalPrice,
     });
     alert("Registration submitted successfully!");
   };
-
   return (
     <div className="w-full max-w-3xl mx-auto">
       <form onSubmit={handleSubmit} className="space-y-8">
@@ -329,6 +337,38 @@ export default function IndividualRegistration() {
             </div>
           )}
 
+          {numberOfDays === "one" && (
+            <div className="mt-6">
+              <h3 className="text-lg font-semibold mb-3">Select Date</h3>
+              <div className="flex gap-4">
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    name="date"
+                    value="29"
+                    checked={selectedDate === "29"}
+                    onChange={(e) => setSelectedDate(e.target.value)}
+                    className="mr-2"
+                    required
+                  />
+                  <span>29 May 2025</span>
+                </label>
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    name="date"
+                    value="30"
+                    checked={selectedDate === "30"}
+                    onChange={(e) => setSelectedDate(e.target.value)}
+                    className="mr-2"
+                    required
+                  />
+                  <span>30 May 2025</span>
+                </label>
+              </div>
+            </div>
+          )}
+
           {/* Pricing Selection */}
           {pricingOptions.length > 0 && (
             <div className="mt-6">
@@ -437,6 +477,10 @@ export default function IndividualRegistration() {
               attendeeType,
               isMember,
               numberOfDays,
+              selectedDate:
+                numberOfDays === "one"
+                  ? `${selectedDate} May 2025`
+                  : "Both days",
               selectedPricing,
               totalPrice,
             }}

@@ -30,7 +30,7 @@ interface BulkFormData {
   nonMemberTeachers: number;
   numberOfDays: "one" | "two";
   selectedDate?: string;
-  totalCost: number;
+  totalPrice: number;
 }
 
 // Booth registration data type
@@ -83,18 +83,29 @@ export default function Submit({
 
   const handlePayNow = async () => {
     setIsProcessing(true);
+
     try {
-      // Implement payment gateway integration here
-      console.log("Processing card payment", { formData, totalPrice });
+      const response = await fetch("/api/create-checkout-session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          amount: totalPrice,
+          reference: `REG-${Date.now()}`,
+        }),
+      });
 
-      // Send email with form data
-      await sendFormDataEmail(formData, formType, "card");
+      const data = await response.json();
 
-      alert("Payment processed successfully!");
+      if (data?.checkoutUrl) {
+        window.location.href = data.checkoutUrl; // Redirect to Yoco
+      } else {
+        alert("Failed to start payment session.");
+      }
     } catch (error) {
       console.error("Payment failed:", error);
       alert("Payment processing failed. Please try again.");
     }
+
     setIsProcessing(false);
   };
 
@@ -117,12 +128,106 @@ export default function Submit({
     type: "individual" | "bulk" | "booth" | "sponsor",
     paymentMethod: "card" | "eft"
   ) => {
-    // Implement email sending logic here
-    console.log("Sending email with form data", {
-      data,
-      type,
-      paymentMethod,
-    });
+    try {
+      // Get the user's email based on form type
+      const userEmail =
+        "email" in data
+          ? data.email
+          : "contactPersonEmail" in data
+          ? data.contactPersonEmail
+          : "companyEmail" in data
+          ? data.companyEmail
+          : null;
+
+      // Format the data for email
+      const formattedDate = new Date().toLocaleString();
+      const reference = `REG-${Date.now()}`;
+
+      // Create HTML content for admin email
+      const adminHtml = `
+      <html>
+        <body>
+          <h2>New Registration Submission</h2>
+          <p><strong>Registration Type:</strong> ${type}</p>
+          <p><strong>Payment Method:</strong> ${paymentMethod}</p>
+          <p><strong>Reference:</strong> ${reference}</p>
+          <p><strong>Submission Date:</strong> ${formattedDate}</p>
+          <hr>
+          <h3>Form Details:</h3>
+          <table style="width: 100%; border-collapse: collapse;">
+            ${Object.entries(data)
+              .map(
+                ([key, value]) => `
+                <tr style="border-bottom: 1px solid #ddd;">
+                  <td style="padding: 8px; font-weight: bold;">${key}:</td>
+                  <td style="padding: 8px;">${value}</td>
+                </tr>
+              `
+              )
+              .join("")}
+          </table>
+        </body>
+      </html>
+    `;
+
+      // Send email to admin using API route
+      await fetch("/api/send-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: "anguscarey1@gmail.com",
+          title: `New ${
+            type.charAt(0).toUpperCase() + type.slice(1)
+          } Registration - ${reference}`,
+          message: adminHtml,
+        }),
+      });
+
+      // Send confirmation email to user if email exists
+      if (userEmail) {
+        const userHtml = `
+        <html>
+          <body>
+            <h2>Thank you for your registration!</h2>
+            <p>Your registration has been received with reference: ${reference}</p>
+            ${
+              paymentMethod === "eft"
+                ? `
+              <h3>EFT Payment Details:</h3>
+              <p>Please use your reference number when making payment:</p>
+              <p><strong>Bank:</strong> [Bank Name]</p>
+              <p><strong>Account Holder:</strong> [Account Holder]</p>
+              <p><strong>Account Number:</strong> [Account Number]</p>
+              <p><strong>Branch Code:</strong> [Branch Code]</p>
+              <p><strong>Reference:</strong> ${reference}</p>
+              <p><strong>Amount Due:</strong> R${data.totalPrice?.toFixed(
+                2
+              )}</p>
+            `
+                : `
+              <p>Your payment is being processed via card payment.</p>
+            `
+            }
+            <hr>
+            <p>If you have any questions, please contact us.</p>
+          </body>
+        </html>
+      `;
+
+        await fetch("/api/send-email", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: userEmail,
+            title: `Registration Confirmation - ${reference}`,
+            message: userHtml,
+          }),
+        });
+      }
+    } catch (error) {
+      console.error("Failed to send emails:", error);
+      throw new Error("Failed to send registration emails");
+    }
   };
 
   return (
