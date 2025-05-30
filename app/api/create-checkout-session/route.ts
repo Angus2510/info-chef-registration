@@ -3,14 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const {
-      amount,
-      currency = "ZAR",
-
-      reference,
-      formData,
-      formType,
-    } = body;
+    const { amount, currency = "ZAR", reference, formData, formType } = body;
 
     // Validate required fields
     if (!amount || !reference || !formData || !formType) {
@@ -47,7 +40,13 @@ export async function POST(request: NextRequest) {
       }),
     };
 
-    const successUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/payment/success?reference=${reference}&type=${formType}`;
+    // Encode form data for success URL
+    const encodedFormData = Buffer.from(JSON.stringify(formData)).toString(
+      "base64"
+    );
+
+    // Create success and cancel URLs with encoded data
+    const successUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/payment/success?reference=${reference}&type=${formType}&data=${encodedFormData}`;
     const cancelUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/payment/cancel`;
 
     console.log("Sending request to Yoco:", {
