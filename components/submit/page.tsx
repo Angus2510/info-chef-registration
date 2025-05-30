@@ -12,6 +12,7 @@ interface IndividualFormData {
   attendeeType: string;
   isMember: boolean;
   numberOfDays: "one" | "two";
+  selectedDate?: string;
   selectedPricing: string;
   totalPrice: number;
 }
@@ -221,16 +222,14 @@ export default function Submit({
               paymentMethod === "eft"
                 ? `
               <div style="background-color: #e6f7ff; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
-                <h3 style="color: #2c5282;">EFT Payment Details:</h3>
-                <p>Please use your reference number when making payment:</p>
-                <p><strong>Bank:</strong> [Bank Name]</p>
-                <p><strong>Account Holder:</strong> [Account Holder]</p>
-                <p><strong>Account Number:</strong> [Account Number]</p>
-                <p><strong>Branch Code:</strong> [Branch Code]</p>
-                <p><strong>Reference:</strong> ${reference}</p>
-                <p><strong>Amount Due:</strong> R${data.totalPrice?.toFixed(
-                  2
-                )}</p>
+              <h3 style="color: #2c5282;">Payment Information:</h3>
+              <p>Thank you for choosing the EFT payment option.</p>
+              <p>Our finance team will contact you shortly with an invoice containing our banking details.</p>
+              <p><strong>Your Reference Number:</strong> ${reference}</p>
+              <p><strong>Amount Due:</strong> R${data.totalPrice?.toFixed(
+                2
+              )}</p>
+              <p>Please note: Your registration will be confirmed once payment is received.</p>
               </div>
             `
                 : `
@@ -242,7 +241,7 @@ export default function Submit({
               ${formDataTable}
             </table>
             <div style="margin-top: 20px; padding: 15px; background-color: #f8f9fa; border-radius: 5px;">
-              <p>If you have any questions, please contact us at support@sachefs.co.za</p>
+              <p>If you have any questions, please contact us at info@sachefs.co.za</p>
             </div>
           </body>
         </html>
