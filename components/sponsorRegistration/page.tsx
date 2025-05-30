@@ -18,7 +18,20 @@ export default function SponsorRegistration() {
   const [companyVAT, setCompanyVAT] = useState<string>("");
   const [companyContactPerson, setCompanyContactPerson] = useState<string>("");
 
-  // Price calculation function
+  // Handler functions for checkbox selections
+  const handleSponsorshipTypeChange = (value: string) => {
+    setSponsorshipType((prevValue) => (prevValue === value ? "" : value));
+  };
+
+  const handleCompetitionPantryChange = (value: string) => {
+    setCompetitionPantryType((prevValue) => (prevValue === value ? "" : value));
+  };
+
+  const handlePartnerTierChange = (value: string) => {
+    setPartnerTier((prevValue) => (prevValue === value ? "" : value));
+  };
+
+  // Price calculation function remains the same
   const calculatePrices = (): {
     basePrice: number;
     discount: number;
@@ -102,18 +115,21 @@ export default function SponsorRegistration() {
 
           {/* Sponsorship Options */}
           <div className="mb-6">
-            <h3 className="text-lg font-semibold mb-3">
+            <h3 className="text-lg font-semibold mb-2">
               🤝 Sponsorship Opportunities
             </h3>
+            <p className="text-sm text-gray-500 mb-3">
+              Select one option or click again to deselect
+            </p>
             <div className="space-y-3">
+              {/* Cocktail Event */}
               <div className="bg-white p-4 rounded-md border">
-                <label className="flex items-start">
+                <label className="flex items-start cursor-pointer">
                   <input
-                    type="radio"
-                    name="sponsorshipType"
-                    value="cocktail"
+                    type="checkbox"
+                    checked={sponsorshipType === "cocktail"}
                     className="mt-1 mr-3"
-                    onChange={(e) => setSponsorshipType(e.target.value)}
+                    onChange={() => handleSponsorshipTypeChange("cocktail")}
                   />
                   <div>
                     <p className="font-medium">Cocktail Event</p>
@@ -125,14 +141,21 @@ export default function SponsorRegistration() {
                 </label>
               </div>
 
+              {/* Seminar & Activation Area */}
               <div className="bg-white p-4 rounded-md border">
-                <label className="flex items-start">
+                <label className="flex items-start cursor-pointer">
                   <input
-                    type="radio"
-                    name="sponsorshipType"
-                    value="seminar_&_activation_area_sponsorship"
+                    type="checkbox"
+                    checked={
+                      sponsorshipType ===
+                      "seminar_&_activation_area_sponsorship"
+                    }
                     className="mt-1 mr-3"
-                    onChange={(e) => setSponsorshipType(e.target.value)}
+                    onChange={() =>
+                      handleSponsorshipTypeChange(
+                        "seminar_&_activation_area_sponsorship"
+                      )
+                    }
                   />
                   <div>
                     <p className="font-medium">Seminar & Activation Area</p>
@@ -144,14 +167,18 @@ export default function SponsorRegistration() {
                 </label>
               </div>
 
+              {/* Refreshment Area */}
               <div className="bg-white p-4 rounded-md border">
-                <label className="flex items-start">
+                <label className="flex items-start cursor-pointer">
                   <input
-                    type="radio"
-                    name="sponsorshipType"
-                    value="refreshment_area_sponsorship"
+                    type="checkbox"
+                    checked={sponsorshipType === "refreshment_area_sponsorship"}
                     className="mt-1 mr-3"
-                    onChange={(e) => setSponsorshipType(e.target.value)}
+                    onChange={() =>
+                      handleSponsorshipTypeChange(
+                        "refreshment_area_sponsorship"
+                      )
+                    }
                   />
                   <div>
                     <p className="font-medium">Refreshment Area</p>
@@ -163,14 +190,16 @@ export default function SponsorRegistration() {
                 </label>
               </div>
 
+              {/* Pop-up Refreshment Spots */}
               <div className="bg-white p-4 rounded-md border">
-                <label className="flex items-start">
+                <label className="flex items-start cursor-pointer">
                   <input
-                    type="radio"
-                    name="sponsorshipType"
-                    value="pop-up_refreshment_spots"
+                    type="checkbox"
+                    checked={sponsorshipType === "pop-up_refreshment_spots"}
                     className="mt-1 mr-3"
-                    onChange={(e) => setSponsorshipType(e.target.value)}
+                    onChange={() =>
+                      handleSponsorshipTypeChange("pop-up_refreshment_spots")
+                    }
                   />
                   <div>
                     <p className="font-medium">Pop-up Refreshment Spots</p>
@@ -182,14 +211,21 @@ export default function SponsorRegistration() {
                 </label>
               </div>
 
+              {/* Lunch Pack & Catering Area */}
               <div className="bg-white p-4 rounded-md border">
-                <label className="flex items-start">
+                <label className="flex items-start cursor-pointer">
                   <input
-                    type="radio"
-                    name="sponsorshipType"
-                    value="lunch_pack_&_catering_area_sponsorship"
+                    type="checkbox"
+                    checked={
+                      sponsorshipType ===
+                      "lunch_pack_&_catering_area_sponsorship"
+                    }
                     className="mt-1 mr-3"
-                    onChange={(e) => setSponsorshipType(e.target.value)}
+                    onChange={() =>
+                      handleSponsorshipTypeChange(
+                        "lunch_pack_&_catering_area_sponsorship"
+                      )
+                    }
                   />
                   <div>
                     <p className="font-medium">Lunch Pack & Catering Area</p>
@@ -205,18 +241,21 @@ export default function SponsorRegistration() {
 
           {/* Competition Pantry Options */}
           <div className="mb-6">
-            <h3 className="text-lg font-semibold mb-3">
+            <h3 className="text-lg font-semibold mb-2">
               🏆 Competition Pantry Sponsorship
             </h3>
+            <p className="text-sm text-gray-500 mb-3">
+              Select one option or click again to deselect
+            </p>
             <div className="space-y-3">
+              {/* Exclusive Pantry */}
               <div className="bg-white p-4 rounded-md border">
-                <label className="flex items-start">
+                <label className="flex items-start cursor-pointer">
                   <input
-                    type="radio"
-                    name="competitionPantryType"
-                    value="exclusive"
+                    type="checkbox"
+                    checked={competitionPantryType === "exclusive"}
                     className="mt-1 mr-3"
-                    onChange={(e) => setCompetitionPantryType(e.target.value)}
+                    onChange={() => handleCompetitionPantryChange("exclusive")}
                   />
                   <div>
                     <p className="font-medium">Exclusive Pantry Sponsorship</p>
@@ -228,14 +267,16 @@ export default function SponsorRegistration() {
                 </label>
               </div>
 
+              {/* Shared Small Pantry */}
               <div className="bg-white p-4 rounded-md border">
-                <label className="flex items-start">
+                <label className="flex items-start cursor-pointer">
                   <input
-                    type="radio"
-                    name="competitionPantryType"
-                    value="shared_small"
+                    type="checkbox"
+                    checked={competitionPantryType === "shared_small"}
                     className="mt-1 mr-3"
-                    onChange={(e) => setCompetitionPantryType(e.target.value)}
+                    onChange={() =>
+                      handleCompetitionPantryChange("shared_small")
+                    }
                   />
                   <div>
                     <p className="font-medium">Shared Small Pantry</p>
@@ -251,18 +292,21 @@ export default function SponsorRegistration() {
 
           {/* Partner Tier Selection */}
           <div className="mb-6">
-            <h3 className="text-lg font-semibold mb-3">
+            <h3 className="text-lg font-semibold mb-2">
               🌟 Partner Tier Selection
             </h3>
+            <p className="text-sm text-gray-500 mb-3">
+              Select one option or click again to deselect
+            </p>
             <div className="space-y-3">
+              {/* Premium Partner */}
               <div className="bg-white p-4 rounded-md border">
-                <label className="flex items-start">
+                <label className="flex items-start cursor-pointer">
                   <input
-                    type="radio"
-                    name="partnerTier"
-                    value="premium"
+                    type="checkbox"
+                    checked={partnerTier === "premium"}
                     className="mt-1 mr-3"
-                    onChange={(e) => setPartnerTier(e.target.value)}
+                    onChange={() => handlePartnerTierChange("premium")}
                   />
                   <div>
                     <p className="font-medium">Premium Partner</p>
@@ -271,14 +315,14 @@ export default function SponsorRegistration() {
                 </label>
               </div>
 
+              {/* Gold Partner */}
               <div className="bg-white p-4 rounded-md border">
-                <label className="flex items-start">
+                <label className="flex items-start cursor-pointer">
                   <input
-                    type="radio"
-                    name="partnerTier"
-                    value="gold"
+                    type="checkbox"
+                    checked={partnerTier === "gold"}
                     className="mt-1 mr-3"
-                    onChange={(e) => setPartnerTier(e.target.value)}
+                    onChange={() => handlePartnerTierChange("gold")}
                   />
                   <div>
                     <p className="font-medium">Gold Partner</p>
@@ -287,14 +331,14 @@ export default function SponsorRegistration() {
                 </label>
               </div>
 
+              {/* Silver Plus Partner */}
               <div className="bg-white p-4 rounded-md border">
-                <label className="flex items-start">
+                <label className="flex items-start cursor-pointer">
                   <input
-                    type="radio"
-                    name="partnerTier"
-                    value="silver_plus"
+                    type="checkbox"
+                    checked={partnerTier === "silver_plus"}
                     className="mt-1 mr-3"
-                    onChange={(e) => setPartnerTier(e.target.value)}
+                    onChange={() => handlePartnerTierChange("silver_plus")}
                   />
                   <div>
                     <p className="font-medium">Silver Plus Partner</p>
@@ -303,14 +347,14 @@ export default function SponsorRegistration() {
                 </label>
               </div>
 
+              {/* Silver Partner */}
               <div className="bg-white p-4 rounded-md border">
-                <label className="flex items-start">
+                <label className="flex items-start cursor-pointer">
                   <input
-                    type="radio"
-                    name="partnerTier"
-                    value="silver"
+                    type="checkbox"
+                    checked={partnerTier === "silver"}
                     className="mt-1 mr-3"
-                    onChange={(e) => setPartnerTier(e.target.value)}
+                    onChange={() => handlePartnerTierChange("silver")}
                   />
                   <div>
                     <p className="font-medium">Silver Partner</p>
@@ -319,14 +363,14 @@ export default function SponsorRegistration() {
                 </label>
               </div>
 
+              {/* Bronze Partner */}
               <div className="bg-white p-4 rounded-md border">
-                <label className="flex items-start">
+                <label className="flex items-start cursor-pointer">
                   <input
-                    type="radio"
-                    name="partnerTier"
-                    value="bronze"
+                    type="checkbox"
+                    checked={partnerTier === "bronze"}
                     className="mt-1 mr-3"
-                    onChange={(e) => setPartnerTier(e.target.value)}
+                    onChange={() => handlePartnerTierChange("bronze")}
                   />
                   <div>
                     <p className="font-medium">Bronze Partner</p>
@@ -338,7 +382,7 @@ export default function SponsorRegistration() {
           </div>
         </div>
 
-        {/* Company Details */}
+        {/* Company Details section - unchanged */}
         <div className="border rounded-lg p-6 bg-gray-50">
           <h2 className="text-xl font-bold mb-4">Company Details</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
