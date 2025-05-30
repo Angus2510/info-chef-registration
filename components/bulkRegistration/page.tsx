@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Submit from "../submit/page";
 
 export default function BulkRegistration() {
   // State for organization type selection
@@ -641,19 +642,11 @@ export default function BulkRegistration() {
 
         {/* Submit Button */}
         <div className="flex justify-center">
-          <button
-            type="submit"
-            className="bg-blue-600 text-white py-3 px-8 rounded-md hover:bg-blue-700 text-lg font-medium disabled:bg-gray-400"
-            disabled={
-              !organizationType ||
-              (memberStudents <= 0 &&
-                nonMemberStudents <= 0 &&
-                memberTeachers <= 0 &&
-                nonMemberTeachers <= 0)
-            }
-          >
-            Submit Registration
-          </button>
+          <Submit
+            formData={FormData}
+            totalPrice={totalCost}
+            formType="bulk" // or "bulk", "booth", "sponsor"
+          />
         </div>
       </form>
     </div>

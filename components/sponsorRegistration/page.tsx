@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Submit from "@/components/submit/page";
 
 export default function SponsorRegistration() {
   // State for form fields
@@ -17,6 +18,61 @@ export default function SponsorRegistration() {
   const [companyVAT, setCompanyVAT] = useState<string>("");
   const [companyContactPerson, setCompanyContactPerson] = useState<string>("");
 
+  // Price calculation function
+  const calculatePrices = (): {
+    basePrice: number;
+    discount: number;
+    priceBeforeVAT: number;
+    vatAmount: number;
+    totalPrice: number;
+  } => {
+    let basePrice = 0;
+
+    // Sponsorship prices
+    if (sponsorshipType === "cocktail") basePrice = 80000;
+    if (sponsorshipType === "seminar_&_activation_area_sponsorship")
+      basePrice = 20000;
+    if (sponsorshipType === "refreshment_area_sponsorship") basePrice = 10000;
+    if (sponsorshipType === "pop-up_refreshment_spots") basePrice = 4000;
+    if (sponsorshipType === "lunch_pack_&_catering_area_sponsorship")
+      basePrice = 55000;
+
+    // Competition Pantry prices
+    if (competitionPantryType === "exclusive") basePrice = 90000;
+    if (competitionPantryType === "shared_small") basePrice = 30000;
+
+    // Calculate partner discount
+    let discountPercentage = 0;
+    switch (partnerTier.toLowerCase()) {
+      case "premium":
+        discountPercentage = 0.2;
+        break;
+      case "gold":
+        discountPercentage = 0.15;
+        break;
+      case "silver_plus":
+        discountPercentage = 0.1;
+        break;
+      case "silver":
+        discountPercentage = 0.07;
+        break;
+      case "bronze":
+        discountPercentage = 0.05;
+        break;
+    }
+
+    const discount = basePrice * discountPercentage;
+    const priceBeforeVAT = basePrice - discount;
+    const vatAmount = priceBeforeVAT * 0.15;
+    const totalPrice = priceBeforeVAT + vatAmount;
+
+    return { basePrice, discount, priceBeforeVAT, vatAmount, totalPrice };
+  };
+
+  // Calculate prices
+  const { basePrice, discount, priceBeforeVAT, vatAmount, totalPrice } =
+    calculatePrices();
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Form submitted", {
@@ -29,6 +85,11 @@ export default function SponsorRegistration() {
       companyContactNumber,
       companyVAT,
       companyContactPerson,
+      basePrice,
+      discount,
+      priceBeforeVAT,
+      vatAmount,
+      totalPrice,
     });
     alert("Sponsorship registration submitted successfully!");
   };
@@ -37,168 +98,249 @@ export default function SponsorRegistration() {
     <div className="w-full max-w-4xl mx-auto">
       <form onSubmit={handleSubmit} className="space-y-8">
         <div className="border rounded-lg p-6 bg-gray-50">
-          <h2 className="text-xl font-bold mb-4">Sponsorship Opportunities</h2>
+          <h2 className="text-xl font-bold mb-4">Select Sponsorship Options</h2>
 
-          {/* Main Sponsorship Options */}
-          <div className="space-y-4">
-            {/* Cocktail Area */}
-            <div className="bg-white p-4 rounded-md border">
-              <label className="flex items-start">
-                <input
-                  type="radio"
-                  name="sponsorshipType"
-                  value="cocktail"
-                  className="mt-1 mr-3"
-                  onChange={() => setSponsorshipType("cocktail")}
-                />
-                <div>
-                  <p className="font-medium">🥂 Cocktail Area Sponsorship</p>
-                  <p className="text-green-700 font-medium">R80,000.00</p>
-                  <p className="text-gray-600 text-sm">
-                    Includes approx. R210,000 worth of branding
-                  </p>
-                </div>
-              </label>
-            </div>
-
-            {/* Competition Pantry */}
-            <div className="bg-white p-4 rounded-md border">
-              <h4 className="font-medium mb-2">
-                🛒 Competition Pantry Sponsorship
-              </h4>
-              <p className="text-sm text-gray-600 mb-2">
-                Branding in the pantry used during competitions
-              </p>
-              <div className="space-y-2 ml-4">
-                {[
-                  {
-                    type: "exclusive",
-                    price: "90,000.00",
-                    details: "Exclusive branding + 9 sqm stand",
-                  },
-
-                  {
-                    type: "shared_small",
-                    price: "30,000.00",
-                    details: "Shared branding + 3 sqm stand",
-                  },
-                ].map((option) => (
-                  <label key={option.type} className="flex items-start">
-                    <input
-                      type="radio"
-                      name="competitionPantryType"
-                      value={option.type}
-                      className="mt-1 mr-3"
-                      onChange={() => setCompetitionPantryType(option.type)}
-                    />
-                    <div>
-                      <p className="text-green-700 font-medium">
-                        R{option.price}
-                      </p>
-                      <p className="text-gray-600 text-sm">{option.details}</p>
-                    </div>
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            {/* Other Sponsorship Options */}
-            {[
-              {
-                emoji: "🎤",
-                title: "Seminar & Activation Area Sponsorship",
-                price: "20,000.00",
-                details:
-                  "Branding of venues used for talks, product activations, and AGM",
-              },
-              {
-                emoji: "☕",
-                title: "Refreshment Area Sponsorship",
-                price: "10,000.00",
-                details: "Branding of main refreshment & catering areas (x2)",
-              },
-              {
-                emoji: "🧃",
-                title: "Pop-Up Refreshment Spots",
-                price: "4,000.00",
-                details: "Pop-up refreshment branding throughout venue ",
-              },
-              {
-                emoji: "🍱",
-                title: "Lunch Pack & Catering Area Sponsorship",
-                price: "55,000.00",
-                details:
-                  "Full sponsorship and branding of the area where scholar lunch packs and café food are served",
-              },
-            ].map((option) => (
-              <div
-                key={option.title}
-                className="bg-white p-4 rounded-md border"
-              >
+          {/* Sponsorship Options */}
+          <div className="mb-6">
+            <h3 className="text-lg font-semibold mb-3">
+              🤝 Sponsorship Opportunities
+            </h3>
+            <div className="space-y-3">
+              <div className="bg-white p-4 rounded-md border">
                 <label className="flex items-start">
                   <input
                     type="radio"
                     name="sponsorshipType"
-                    value={option.title.toLowerCase().replace(/\s+/g, "_")}
+                    value="cocktail"
                     className="mt-1 mr-3"
-                    onChange={() => setSponsorshipType(option.title)}
+                    onChange={(e) => setSponsorshipType(e.target.value)}
                   />
                   <div>
-                    <p className="font-medium">
-                      {option.emoji} {option.title}
+                    <p className="font-medium">Cocktail Event</p>
+                    <p className="text-green-700 font-medium">R80,000.00</p>
+                    <p className="text-gray-600 text-sm">
+                      Exclusive sponsorship of the networking cocktail event
                     </p>
-                    <p className="text-green-700 font-medium">
-                      R{option.price}
-                    </p>
-                    <p className="text-gray-600 text-sm">{option.details}</p>
                   </div>
                 </label>
               </div>
-            ))}
-          </div>
 
-          {/* Partner Tier Selection */}
-          <div className="mt-6">
-            <h3 className="text-lg font-semibold mb-3">
-              🏅 SA Chefs Partner Discount on Sponsorships
-            </h3>
-            <div className="bg-white p-4 rounded-md border">
-              <div className="space-y-2">
-                {[
-                  { tier: "Premium", discount: "20% + FREE exhibition stand" },
-                  { tier: "Gold", discount: "15%" },
-                  { tier: "Silver Plus", discount: "10%" },
-                  { tier: "Silver", discount: "7%" },
-                  { tier: "Bronze", discount: "5%" },
-                ].map((tier) => (
-                  <label key={tier.tier} className="flex items-start">
-                    <input
-                      type="radio"
-                      name="partnerTier"
-                      value={tier.tier.toLowerCase().replace(/\s+/g, "_")}
-                      className="mt-1 mr-3"
-                      onChange={() => setPartnerTier(tier.tier)}
-                    />
-                    <div>
-                      <p className="font-medium">{tier.tier}</p>
-                      <p className="text-gray-600 text-sm">
-                        Discount: {tier.discount}
-                      </p>
-                    </div>
-                  </label>
-                ))}
+              <div className="bg-white p-4 rounded-md border">
+                <label className="flex items-start">
+                  <input
+                    type="radio"
+                    name="sponsorshipType"
+                    value="seminar_&_activation_area_sponsorship"
+                    className="mt-1 mr-3"
+                    onChange={(e) => setSponsorshipType(e.target.value)}
+                  />
+                  <div>
+                    <p className="font-medium">Seminar & Activation Area</p>
+                    <p className="text-green-700 font-medium">R20,000.00</p>
+                    <p className="text-gray-600 text-sm">
+                      Branding rights for seminar and activation spaces
+                    </p>
+                  </div>
+                </label>
+              </div>
+
+              <div className="bg-white p-4 rounded-md border">
+                <label className="flex items-start">
+                  <input
+                    type="radio"
+                    name="sponsorshipType"
+                    value="refreshment_area_sponsorship"
+                    className="mt-1 mr-3"
+                    onChange={(e) => setSponsorshipType(e.target.value)}
+                  />
+                  <div>
+                    <p className="font-medium">Refreshment Area</p>
+                    <p className="text-green-700 font-medium">R10,000.00</p>
+                    <p className="text-gray-600 text-sm">
+                      Branding rights for refreshment areas
+                    </p>
+                  </div>
+                </label>
+              </div>
+
+              <div className="bg-white p-4 rounded-md border">
+                <label className="flex items-start">
+                  <input
+                    type="radio"
+                    name="sponsorshipType"
+                    value="pop-up_refreshment_spots"
+                    className="mt-1 mr-3"
+                    onChange={(e) => setSponsorshipType(e.target.value)}
+                  />
+                  <div>
+                    <p className="font-medium">Pop-up Refreshment Spots</p>
+                    <p className="text-green-700 font-medium">R4,000.00</p>
+                    <p className="text-gray-600 text-sm">
+                      Branding for pop-up refreshment locations
+                    </p>
+                  </div>
+                </label>
+              </div>
+
+              <div className="bg-white p-4 rounded-md border">
+                <label className="flex items-start">
+                  <input
+                    type="radio"
+                    name="sponsorshipType"
+                    value="lunch_pack_&_catering_area_sponsorship"
+                    className="mt-1 mr-3"
+                    onChange={(e) => setSponsorshipType(e.target.value)}
+                  />
+                  <div>
+                    <p className="font-medium">Lunch Pack & Catering Area</p>
+                    <p className="text-green-700 font-medium">R55,000.00</p>
+                    <p className="text-gray-600 text-sm">
+                      Exclusive branding for lunch pack and catering areas
+                    </p>
+                  </div>
+                </label>
               </div>
             </div>
           </div>
 
-          <p className="text-sm text-gray-600 mt-4">
-            All sponsorship prices exclude VAT
-          </p>
+          {/* Competition Pantry Options */}
+          <div className="mb-6">
+            <h3 className="text-lg font-semibold mb-3">
+              🏆 Competition Pantry Sponsorship
+            </h3>
+            <div className="space-y-3">
+              <div className="bg-white p-4 rounded-md border">
+                <label className="flex items-start">
+                  <input
+                    type="radio"
+                    name="competitionPantryType"
+                    value="exclusive"
+                    className="mt-1 mr-3"
+                    onChange={(e) => setCompetitionPantryType(e.target.value)}
+                  />
+                  <div>
+                    <p className="font-medium">Exclusive Pantry Sponsorship</p>
+                    <p className="text-green-700 font-medium">R90,000.00</p>
+                    <p className="text-gray-600 text-sm">
+                      Exclusive branding rights for competition pantry
+                    </p>
+                  </div>
+                </label>
+              </div>
+
+              <div className="bg-white p-4 rounded-md border">
+                <label className="flex items-start">
+                  <input
+                    type="radio"
+                    name="competitionPantryType"
+                    value="shared_small"
+                    className="mt-1 mr-3"
+                    onChange={(e) => setCompetitionPantryType(e.target.value)}
+                  />
+                  <div>
+                    <p className="font-medium">Shared Small Pantry</p>
+                    <p className="text-green-700 font-medium">R30,000.00</p>
+                    <p className="text-gray-600 text-sm">
+                      Shared branding rights for small pantry section
+                    </p>
+                  </div>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          {/* Partner Tier Selection */}
+          <div className="mb-6">
+            <h3 className="text-lg font-semibold mb-3">
+              🌟 Partner Tier Selection
+            </h3>
+            <div className="space-y-3">
+              <div className="bg-white p-4 rounded-md border">
+                <label className="flex items-start">
+                  <input
+                    type="radio"
+                    name="partnerTier"
+                    value="premium"
+                    className="mt-1 mr-3"
+                    onChange={(e) => setPartnerTier(e.target.value)}
+                  />
+                  <div>
+                    <p className="font-medium">Premium Partner</p>
+                    <p className="text-green-700 font-medium">20% Discount</p>
+                  </div>
+                </label>
+              </div>
+
+              <div className="bg-white p-4 rounded-md border">
+                <label className="flex items-start">
+                  <input
+                    type="radio"
+                    name="partnerTier"
+                    value="gold"
+                    className="mt-1 mr-3"
+                    onChange={(e) => setPartnerTier(e.target.value)}
+                  />
+                  <div>
+                    <p className="font-medium">Gold Partner</p>
+                    <p className="text-green-700 font-medium">15% Discount</p>
+                  </div>
+                </label>
+              </div>
+
+              <div className="bg-white p-4 rounded-md border">
+                <label className="flex items-start">
+                  <input
+                    type="radio"
+                    name="partnerTier"
+                    value="silver_plus"
+                    className="mt-1 mr-3"
+                    onChange={(e) => setPartnerTier(e.target.value)}
+                  />
+                  <div>
+                    <p className="font-medium">Silver Plus Partner</p>
+                    <p className="text-green-700 font-medium">10% Discount</p>
+                  </div>
+                </label>
+              </div>
+
+              <div className="bg-white p-4 rounded-md border">
+                <label className="flex items-start">
+                  <input
+                    type="radio"
+                    name="partnerTier"
+                    value="silver"
+                    className="mt-1 mr-3"
+                    onChange={(e) => setPartnerTier(e.target.value)}
+                  />
+                  <div>
+                    <p className="font-medium">Silver Partner</p>
+                    <p className="text-green-700 font-medium">7% Discount</p>
+                  </div>
+                </label>
+              </div>
+
+              <div className="bg-white p-4 rounded-md border">
+                <label className="flex items-start">
+                  <input
+                    type="radio"
+                    name="partnerTier"
+                    value="bronze"
+                    className="mt-1 mr-3"
+                    onChange={(e) => setPartnerTier(e.target.value)}
+                  />
+                  <div>
+                    <p className="font-medium">Bronze Partner</p>
+                    <p className="text-green-700 font-medium">5% Discount</p>
+                  </div>
+                </label>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Company Details */}
         <div className="border rounded-lg p-6 bg-gray-50">
-          <h2 className="text-xl font-bold mb-4">Company Invoicing Details</h2>
+          <h2 className="text-xl font-bold mb-4">Company Details</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label
@@ -304,13 +446,45 @@ export default function SponsorRegistration() {
           </div>
         </div>
 
+        {/* Price Summary */}
+        {basePrice > 0 && (
+          <div className="border rounded-lg p-6 bg-gray-50">
+            <h2 className="text-xl font-bold mb-4">Price Summary</h2>
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <span>Base Price:</span>
+                <span className="font-medium">R{basePrice.toFixed(2)}</span>
+              </div>
+              {discount > 0 && (
+                <div className="flex justify-between text-red-600">
+                  <span>Partner Discount:</span>
+                  <span>-R{discount.toFixed(2)}</span>
+                </div>
+              )}
+              <div className="flex justify-between">
+                <span>Price (excl. VAT):</span>
+                <span className="font-medium">
+                  R{priceBeforeVAT.toFixed(2)}
+                </span>
+              </div>
+              <div className="flex justify-between text-gray-600">
+                <span>VAT (15%):</span>
+                <span>R{vatAmount.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between font-bold text-lg border-t pt-2 mt-2">
+                <span>Total Price (incl. VAT):</span>
+                <span>R{totalPrice.toFixed(2)}</span>
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="flex justify-center">
-          <button
-            type="submit"
-            className="bg-blue-600 text-white py-3 px-8 rounded-md hover:bg-blue-700 text-lg font-medium"
-          >
-            Submit Sponsorship Registration
-          </button>
+          <Submit
+            formData={FormData}
+            totalPrice={totalPrice}
+            formType="sponsor" // or "bulk", "booth", "sponsor"
+          />
         </div>
       </form>
     </div>

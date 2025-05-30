@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Submit from "@/components/submit/page";
 
 export default function BoothRegistration() {
   // State for form fields
@@ -9,13 +10,39 @@ export default function BoothRegistration() {
   const [educationOption, setEducationOption] = useState<string>("");
   const [industryOption, setIndustryOption] = useState<string>("");
 
-  // Company details states remain unchanged
+  // Company details states
   const [companyName, setCompanyName] = useState<string>("");
   const [companyAddress, setCompanyAddress] = useState<string>("");
   const [companyEmail, setCompanyEmail] = useState<string>("");
   const [companyContactNumber, setCompanyContactNumber] = useState<string>("");
   const [companyVAT, setCompanyVAT] = useState<string>("");
   const [companyContactPerson, setCompanyContactPerson] = useState<string>("");
+
+  // Price calculation function
+  const calculatePriceBeforeVAT = (): number => {
+    let price = 0;
+
+    // Main Exhibition Hall prices
+    if (exhibitorSize === "6sqm") price = 12000;
+    if (exhibitorSize === "4sqm") price = 10000;
+    if (exhibitorSize === "2sqm") price = 6000;
+
+    // Education Lane prices
+    if (educationOption === "member_one_day") price = 4000;
+    if (educationOption === "member_two_days") price = 7000;
+    if (educationOption === "non_member_one_day") price = 5000;
+    if (educationOption === "non_member_two_days") price = 9000;
+
+    // Industry Way prices
+    if (industryOption === "industry_two_days") price = 7000;
+
+    return price;
+  };
+
+  // Calculate prices
+  const priceBeforeVAT = calculatePriceBeforeVAT();
+  const vatAmount = priceBeforeVAT * 0.15;
+  const totalPrice = priceBeforeVAT + vatAmount;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,6 +57,9 @@ export default function BoothRegistration() {
       companyContactNumber,
       companyVAT,
       companyContactPerson,
+      priceBeforeVAT,
+      vatAmount,
+      totalPrice,
     });
     alert("Registration submitted successfully!");
   };
@@ -323,13 +353,35 @@ export default function BoothRegistration() {
           </div>
         </div>
 
+        {/* Price Summary */}
+        {priceBeforeVAT > 0 && (
+          <div className="border rounded-lg p-6 bg-gray-50">
+            <h2 className="text-xl font-bold mb-4">Price Summary</h2>
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <span>Price (excl. VAT):</span>
+                <span className="font-medium">
+                  R{priceBeforeVAT.toFixed(2)}
+                </span>
+              </div>
+              <div className="flex justify-between text-gray-600">
+                <span>VAT (15%):</span>
+                <span>R{vatAmount.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between font-bold text-lg border-t pt-2 mt-2">
+                <span>Total Price (incl. VAT):</span>
+                <span>R{totalPrice.toFixed(2)}</span>
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="flex justify-center">
-          <button
-            type="submit"
-            className="bg-blue-600 text-white py-3 px-8 rounded-md hover:bg-blue-700 text-lg font-medium"
-          >
-            Submit Registration
-          </button>
+          <Submit
+            formData={FormData}
+            totalPrice={totalPrice}
+            formType="booth" // or "bulk", "booth", "sponsor"
+          />
         </div>
       </form>
     </div>

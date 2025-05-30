@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Submit from "@/components/submit/page";
 
 interface PricingOption {
   id: string;
@@ -426,13 +427,11 @@ export default function IndividualRegistration() {
 
         {/* Submit Button */}
         <div className="flex justify-center">
-          <button
-            type="submit"
-            className="bg-blue-600 text-white py-3 px-8 rounded-md hover:bg-blue-700 text-lg font-medium disabled:bg-gray-400"
-            disabled={!selectedPricing}
-          >
-            Submit Registration
-          </button>
+          <Submit
+            formData={FormData}
+            totalPrice={totalPrice}
+            formType="individual" // or "bulk", "booth", "sponsor"
+          />
         </div>
       </form>
     </div>
