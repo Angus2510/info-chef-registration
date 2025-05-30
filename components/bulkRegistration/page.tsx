@@ -11,43 +11,60 @@ export default function BulkRegistration() {
   const [contactPersonName, setContactPersonName] = useState<string>("");
   const [contactPersonEmail, setContactPersonEmail] = useState<string>("");
   const [contactPersonPhone, setContactPersonPhone] = useState<string>("");
-  const [numberOfAttendees, setNumberOfAttendees] = useState<number>(0);
-  const [isMember, setIsMember] = useState<boolean>(false);
-  const [numberOfDays, setNumberOfDays] = useState<"one" | "two">("one");
 
-  // State for total calculation
+  // Member and non-member states
+  const [memberStudents, setMemberStudents] = useState<number>(0);
+  const [nonMemberStudents, setNonMemberStudents] = useState<number>(0);
+  const [memberTeachers, setMemberTeachers] = useState<number>(0);
+  const [nonMemberTeachers, setNonMemberTeachers] = useState<number>(0);
+
+  const [numberOfDays, setNumberOfDays] = useState<"one" | "two">("one");
   const [totalCost, setTotalCost] = useState<number>(0);
 
-  // Calculate total cost when relevant fields change
   useEffect(() => {
-    if (numberOfAttendees <= 0) {
-      setTotalCost(0);
-      return;
-    }
-
-    let pricePerPerson = 0;
+    let totalCost = 0;
 
     if (organizationType === "highschool") {
-      pricePerPerson = 110; // R110 per day for high school students
+      const studentCost = 110 * (memberStudents + nonMemberStudents);
+      const teacherCost = 150 * (memberTeachers + nonMemberTeachers);
+      totalCost =
+        (studentCost + teacherCost) * (numberOfDays === "two" ? 2 : 1);
+    } else if (organizationType === "culinary") {
+      // Member students
+      const memberStudentCost =
+        memberStudents * (numberOfDays === "one" ? 110 : 200);
+      // Non-member students
+      const nonMemberStudentCost =
+        nonMemberStudents * (numberOfDays === "one" ? 150 : 250);
+      // Member teachers
+      const memberTeacherCost =
+        memberTeachers * (numberOfDays === "one" ? 150 : 250);
+      // Non-member teachers
+      const nonMemberTeacherCost =
+        nonMemberTeachers * (numberOfDays === "one" ? 200 : 300);
 
-      if (numberOfDays === "two") {
-        pricePerPerson = pricePerPerson * 2; // Double for two days
-      }
-    } else if (
-      organizationType === "culinary" ||
-      organizationType === "company"
-    ) {
-      if (isMember) {
-        pricePerPerson = numberOfDays === "one" ? 110 : 200; // Member rates
-      } else {
-        pricePerPerson = numberOfDays === "one" ? 150 : 250; // Non-member rates
-      }
+      totalCost =
+        memberStudentCost +
+        nonMemberStudentCost +
+        memberTeacherCost +
+        nonMemberTeacherCost;
+    } else if (organizationType === "company") {
+      const memberCost = memberStudents * (numberOfDays === "one" ? 110 : 200);
+      const nonMemberCost =
+        nonMemberStudents * (numberOfDays === "one" ? 150 : 250);
+      totalCost = memberCost + nonMemberCost;
     }
 
-    setTotalCost(pricePerPerson * numberOfAttendees);
-  }, [organizationType, numberOfAttendees, isMember, numberOfDays]);
+    setTotalCost(totalCost);
+  }, [
+    organizationType,
+    memberStudents,
+    nonMemberStudents,
+    memberTeachers,
+    nonMemberTeachers,
+    numberOfDays,
+  ]);
 
-  // Handle form submission
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Form submitted", {
@@ -56,8 +73,10 @@ export default function BulkRegistration() {
       contactPersonName,
       contactPersonEmail,
       contactPersonPhone,
-      numberOfAttendees,
-      isMember,
+      memberStudents,
+      nonMemberStudents,
+      memberTeachers,
+      nonMemberTeachers,
       numberOfDays,
       totalCost,
     });
@@ -83,7 +102,6 @@ export default function BulkRegistration() {
                 />
                 <div>
                   <p className="font-medium">High School</p>
-                  <p className="text-green-700 font-medium">R110.00 per day</p>
                   <p className="text-gray-600 text-sm">
                     For high school scholars
                   </p>
@@ -128,7 +146,7 @@ export default function BulkRegistration() {
             </div>
           </div>
 
-          {/* Pricing Information - Shows after selection */}
+          {/* Pricing Information */}
           {organizationType && (
             <div className="mt-6 bg-blue-50 p-4 rounded-md border border-blue-200">
               <h3 className="text-lg font-semibold mb-2">
@@ -139,6 +157,8 @@ export default function BulkRegistration() {
                 <div className="text-sm">
                   <p className="font-medium">Scholar (High School)</p>
                   <p>R110.00 per person, per day</p>
+                  <p className="font-medium">Teachers</p>
+                  <p>R150.00 per person, per day</p>
                 </div>
               )}
 
@@ -156,6 +176,17 @@ export default function BulkRegistration() {
                     <li>R200.00 for two days (SA Chefs member rate)</li>
                     <li>R250.00 for two days (non-member rate)</li>
                   </ul>
+                  {organizationType === "culinary" && (
+                    <>
+                      <p className="font-medium mt-2">Supervisors/Teachers</p>
+                      <ul className="list-disc ml-5 mt-1">
+                        <li>R150.00 per day (SA Chefs member rate)</li>
+                        <li>R200.00 per day (non-member rate)</li>
+                        <li>R250.00 for two days (SA Chefs member rate)</li>
+                        <li>R300.00 for two days (non-member rate)</li>
+                      </ul>
+                    </>
+                  )}
                 </div>
               )}
 
@@ -170,7 +201,7 @@ export default function BulkRegistration() {
           )}
         </div>
 
-        {/* Organization Details - Only shown after organization type is selected */}
+        {/* Organization Details */}
         {organizationType && (
           <div className="border rounded-lg p-6 bg-gray-50">
             <h2 className="text-xl font-bold mb-4">Organization Details</h2>
@@ -247,61 +278,105 @@ export default function BulkRegistration() {
 
               <div>
                 <label
-                  htmlFor="numberOfAttendees"
+                  htmlFor="memberStudents"
                   className="block text-sm font-medium mb-1"
                 >
-                  Number of Attendees
+                  Number of{" "}
+                  {organizationType === "company"
+                    ? "Members"
+                    : "Student Members"}
                 </label>
                 <input
                   type="number"
-                  id="numberOfAttendees"
-                  min="1"
-                  value={numberOfAttendees}
+                  id="memberStudents"
+                  min="0"
+                  value={memberStudents}
                   onChange={(e) =>
-                    setNumberOfAttendees(parseInt(e.target.value) || 0)
+                    setMemberStudents(parseInt(e.target.value) || 0)
                   }
                   className="w-full p-2 border rounded-md"
-                  required
                 />
               </div>
+
+              <div>
+                <label
+                  htmlFor="nonMemberStudents"
+                  className="block text-sm font-medium mb-1"
+                >
+                  Number of{" "}
+                  {organizationType === "company"
+                    ? "Non-Members"
+                    : "Student Non-Members"}
+                </label>
+                <input
+                  type="number"
+                  id="nonMemberStudents"
+                  min="0"
+                  value={nonMemberStudents}
+                  onChange={(e) =>
+                    setNonMemberStudents(parseInt(e.target.value) || 0)
+                  }
+                  className="w-full p-2 border rounded-md"
+                />
+              </div>
+
+              {(organizationType === "highschool" ||
+                organizationType === "culinary") && (
+                <>
+                  <div>
+                    <label
+                      htmlFor="memberTeachers"
+                      className="block text-sm font-medium mb-1"
+                    >
+                      Number of{" "}
+                      {organizationType === "highschool"
+                        ? "Teacher"
+                        : "Supervisor"}{" "}
+                      Members
+                    </label>
+                    <input
+                      type="number"
+                      id="memberTeachers"
+                      min="0"
+                      value={memberTeachers}
+                      onChange={(e) =>
+                        setMemberTeachers(parseInt(e.target.value) || 0)
+                      }
+                      className="w-full p-2 border rounded-md"
+                    />
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="nonMemberTeachers"
+                      className="block text-sm font-medium mb-1"
+                    >
+                      Number of{" "}
+                      {organizationType === "highschool"
+                        ? "Teacher"
+                        : "Supervisor"}{" "}
+                      Non-Members
+                    </label>
+                    <input
+                      type="number"
+                      id="nonMemberTeachers"
+                      min="0"
+                      value={nonMemberTeachers}
+                      onChange={(e) =>
+                        setNonMemberTeachers(parseInt(e.target.value) || 0)
+                      }
+                      className="w-full p-2 border rounded-md"
+                    />
+                  </div>
+                </>
+              )}
             </div>
           </div>
         )}
 
-        {/* Attendance Options - Only shown for culinary and company groups */}
-        {(organizationType === "culinary" ||
-          organizationType === "company") && (
+        {/* Number of Days Selection */}
+        {organizationType && (
           <div className="border rounded-lg p-6 bg-gray-50">
             <h2 className="text-xl font-bold mb-4">Attendance Options</h2>
-
-            <div className="mb-4">
-              <p className="block text-sm font-medium mb-2">
-                SA Chefs Association Membership Status
-              </p>
-              <div className="flex gap-4">
-                <label className="flex items-center">
-                  <input
-                    type="radio"
-                    name="membershipStatus"
-                    checked={isMember}
-                    onChange={() => setIsMember(true)}
-                    className="mr-2"
-                  />
-                  <span>Member</span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                    type="radio"
-                    name="membershipStatus"
-                    checked={!isMember}
-                    onChange={() => setIsMember(false)}
-                    className="mr-2"
-                  />
-                  <span>Non-member</span>
-                </label>
-              </div>
-            </div>
-
             <div>
               <p className="block text-sm font-medium mb-2">Number of Days</p>
               <div className="flex gap-4">
@@ -330,17 +405,98 @@ export default function BulkRegistration() {
           </div>
         )}
 
-        {/* Order Summary - Only shown when attendees are selected */}
-        {numberOfAttendees > 0 && (
+        {/* Order Summary */}
+        {(memberStudents > 0 ||
+          nonMemberStudents > 0 ||
+          memberTeachers > 0 ||
+          nonMemberTeachers > 0) && (
           <div className="border rounded-lg p-6 bg-blue-50 shadow-sm">
             <h2 className="text-xl font-bold mb-4">Order Summary</h2>
-            <div className="flex justify-between items-center text-lg">
-              <span>
-                {numberOfAttendees}{" "}
-                {numberOfAttendees === 1 ? "attendee" : "attendees"} ×{" "}
-                {numberOfDays === "two" ? "two days" : "one day"}
-              </span>
-              <span className="font-bold">R{totalCost.toFixed(2)}</span>
+            <div className="space-y-2">
+              {memberStudents > 0 && (
+                <div className="flex justify-between items-center">
+                  <span>
+                    {memberStudents} Member{" "}
+                    {memberStudents === 1
+                      ? organizationType === "company"
+                        ? "attendee"
+                        : "student"
+                      : organizationType === "company"
+                      ? "attendees"
+                      : "students"}
+                  </span>
+                  <span className="font-medium">
+                    R
+                    {(
+                      memberStudents * (numberOfDays === "one" ? 110 : 200)
+                    ).toFixed(2)}
+                  </span>
+                </div>
+              )}
+
+              {nonMemberStudents > 0 && (
+                <div className="flex justify-between items-center">
+                  <span>
+                    {nonMemberStudents} Non-Member{" "}
+                    {nonMemberStudents === 1
+                      ? organizationType === "company"
+                        ? "attendee"
+                        : "student"
+                      : organizationType === "company"
+                      ? "attendees"
+                      : "students"}
+                  </span>
+                  <span className="font-medium">
+                    R
+                    {(
+                      nonMemberStudents * (numberOfDays === "one" ? 150 : 250)
+                    ).toFixed(2)}
+                  </span>
+                </div>
+              )}
+
+              {memberTeachers > 0 && (
+                <div className="flex justify-between items-center">
+                  <span>
+                    {memberTeachers} Member{" "}
+                    {organizationType === "highschool"
+                      ? "teacher"
+                      : "supervisor"}
+                    {memberTeachers !== 1 && "s"}
+                  </span>
+                  <span className="font-medium">
+                    R
+                    {(
+                      memberTeachers * (numberOfDays === "one" ? 150 : 250)
+                    ).toFixed(2)}
+                  </span>
+                </div>
+              )}
+
+              {nonMemberTeachers > 0 && (
+                <div className="flex justify-between items-center">
+                  <span>
+                    {nonMemberTeachers} Non-Member{" "}
+                    {organizationType === "highschool"
+                      ? "teacher"
+                      : "supervisor"}
+                    {nonMemberTeachers !== 1 && "s"}
+                  </span>
+                  <span className="font-medium">
+                    R
+                    {(
+                      nonMemberTeachers * (numberOfDays === "one" ? 200 : 300)
+                    ).toFixed(2)}
+                  </span>
+                </div>
+              )}
+
+              <div className="flex justify-between items-center pt-2 border-t border-blue-200 text-lg">
+                <span>
+                  Total ({numberOfDays === "two" ? "two days" : "one day"})
+                </span>
+                <span className="font-bold">R{totalCost.toFixed(2)}</span>
+              </div>
             </div>
             <p className="text-sm text-gray-600 mt-2">
               Includes goodie bag and lunch pack for each attendee.
@@ -353,7 +509,13 @@ export default function BulkRegistration() {
           <button
             type="submit"
             className="bg-blue-600 text-white py-3 px-8 rounded-md hover:bg-blue-700 text-lg font-medium disabled:bg-gray-400"
-            disabled={!organizationType || numberOfAttendees <= 0}
+            disabled={
+              !organizationType ||
+              (memberStudents <= 0 &&
+                nonMemberStudents <= 0 &&
+                memberTeachers <= 0 &&
+                nonMemberTeachers <= 0)
+            }
           >
             Submit Registration
           </button>

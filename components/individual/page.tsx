@@ -193,8 +193,8 @@ export default function IndividualRegistration() {
                   />
                   <div>
                     <p className="font-medium">High School Scholar</p>
-                    <p className="text-green-700 font-medium">
-                      R110.00 per day
+                    <p className="text-gray-600 text-sm">
+                      For high school scholars
                     </p>
                   </div>
                 </label>

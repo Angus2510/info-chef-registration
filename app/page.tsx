@@ -25,7 +25,7 @@ export default function Home() {
   return (
     <div className="min-h-screen flex flex-col bg-[#243d8e]">
       {/* Logo Section */}
-      <div className="w-full flex justify-center mb-12">
+      <div className="w-full flex justify-center mb-6">
         <Image
           src="/logo-2.png"
           alt="Info Chef Logo"
@@ -34,6 +34,15 @@ export default function Home() {
           priority
           className="object-contain"
         />
+      </div>
+
+      {/* Event Details Section */}
+      <div className="w-full flex justify-center mb-8">
+        <div className="text-center text-white">
+          <h2 className="text-3xl font-bold mb-2">29 - 30 July 2025</h2>
+          <h3 className="text-2xl">The Wanderers Club</h3>
+          <h3 className="text-2xl">9am until 4pm</h3>
+        </div>
       </div>
 
       {/* Main Content */}

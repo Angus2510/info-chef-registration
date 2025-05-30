@@ -99,7 +99,7 @@ export default function BoothRegistration() {
               🎓 Village of Opportunity – Education Lane
             </h3>
             <p className="text-sm text-gray-600 mb-4">
-              For training providers and schools
+              For training providers
               <br />
               Includes: 2 tables, black tablecloths, 2 chairs
             </p>
