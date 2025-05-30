@@ -12,10 +12,8 @@ export default function PaymentSuccess() {
   useEffect(() => {
     if (reference && type && encodedData) {
       try {
-        // Decode the form data
-        const formData = JSON.parse(
-          Buffer.from(encodedData, "base64").toString()
-        );
+        // Move the decoding logic to client-side only
+        const formData = JSON.parse(atob(encodedData));
 
         // Format form data for email
         const formDetails = Object.entries(formData)
