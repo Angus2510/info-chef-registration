@@ -543,6 +543,7 @@ export default function SponsorRegistration() {
             }}
             totalPrice={totalPrice}
             formType="sponsor"
+            disablePayment={!!partnerTier} // Add this line
           />
         </div>
       </form>
