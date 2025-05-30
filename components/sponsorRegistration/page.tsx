@@ -481,9 +481,24 @@ export default function SponsorRegistration() {
 
         <div className="flex justify-center">
           <Submit
-            formData={FormData}
+            formData={{
+              sponsorshipType,
+              competitionPantryType,
+              partnerTier,
+              companyName,
+              companyAddress,
+              companyEmail,
+              companyContactNumber,
+              companyVAT,
+              companyContactPerson,
+              basePrice,
+              discount,
+              priceBeforeVAT,
+              vatAmount,
+              totalPrice,
+            }}
             totalPrice={totalPrice}
-            formType="sponsor" // or "bulk", "booth", "sponsor"
+            formType="sponsor"
           />
         </div>
       </form>

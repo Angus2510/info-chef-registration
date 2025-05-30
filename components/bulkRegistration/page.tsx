@@ -643,9 +643,26 @@ export default function BulkRegistration() {
         {/* Submit Button */}
         <div className="flex justify-center">
           <Submit
-            formData={FormData}
+            formData={{
+              organizationType,
+              schoolName,
+              vatNumber,
+              contactPersonName,
+              contactPersonEmail,
+              contactPersonPhone,
+              memberStudents,
+              nonMemberStudents,
+              memberTeachers,
+              nonMemberTeachers,
+              numberOfDays,
+              selectedDate:
+                numberOfDays === "one"
+                  ? `${selectedDate} May 2025`
+                  : "Both days",
+              totalCost,
+            }}
             totalPrice={totalCost}
-            formType="bulk" // or "bulk", "booth", "sponsor"
+            formType="bulk"
           />
         </div>
       </form>

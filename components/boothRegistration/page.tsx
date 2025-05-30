@@ -378,9 +378,23 @@ export default function BoothRegistration() {
 
         <div className="flex justify-center">
           <Submit
-            formData={FormData}
+            formData={{
+              exhibitorType,
+              exhibitorSize,
+              educationOption,
+              industryOption,
+              companyName,
+              companyAddress,
+              companyEmail,
+              companyContactNumber,
+              companyVAT,
+              companyContactPerson,
+              priceBeforeVAT,
+              vatAmount,
+              totalPrice,
+            }}
             totalPrice={totalPrice}
-            formType="booth" // or "bulk", "booth", "sponsor"
+            formType="booth"
           />
         </div>
       </form>

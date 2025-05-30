@@ -428,9 +428,20 @@ export default function IndividualRegistration() {
         {/* Submit Button */}
         <div className="flex justify-center">
           <Submit
-            formData={FormData}
+            formData={{
+              name,
+              idNumber,
+              email,
+              contactNumber,
+              invoicingDetails,
+              attendeeType,
+              isMember,
+              numberOfDays,
+              selectedPricing,
+              totalPrice,
+            }}
             totalPrice={totalPrice}
-            formType="individual" // or "bulk", "booth", "sponsor"
+            formType="individual"
           />
         </div>
       </form>

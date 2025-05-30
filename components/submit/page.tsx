@@ -2,8 +2,74 @@
 
 import { useState } from "react";
 
+// Individual registration data type
+interface IndividualFormData {
+  name: string;
+  idNumber: string;
+  email: string;
+  contactNumber: string;
+  invoicingDetails: string;
+  attendeeType: string;
+  isMember: boolean;
+  numberOfDays: "one" | "two";
+  selectedPricing: string;
+  totalPrice: number;
+}
+
+// Bulk registration data type
+interface BulkFormData {
+  organizationType: string;
+  schoolName: string;
+  vatNumber?: string;
+  contactPersonName: string;
+  contactPersonEmail: string;
+  contactPersonPhone: string;
+  memberStudents: number;
+  nonMemberStudents: number;
+  memberTeachers: number;
+  nonMemberTeachers: number;
+  numberOfDays: "one" | "two";
+  selectedDate?: string;
+  totalCost: number;
+}
+
+// Booth registration data type
+interface BoothFormData {
+  exhibitorType: string;
+  exhibitorSize: string;
+  educationOption: string;
+  industryOption: string;
+  companyName: string;
+  companyAddress: string;
+  companyEmail: string;
+  companyContactNumber: string;
+  companyVAT: string;
+  companyContactPerson: string;
+  priceBeforeVAT: number;
+  vatAmount: number;
+  totalPrice: number;
+}
+
+// Sponsor registration data type
+interface SponsorFormData {
+  sponsorshipType: string;
+  competitionPantryType: string;
+  partnerTier: string;
+  companyName: string;
+  companyAddress: string;
+  companyEmail: string;
+  companyContactNumber: string;
+  companyVAT: string;
+  companyContactPerson: string;
+  basePrice: number;
+  discount: number;
+  priceBeforeVAT: number;
+  vatAmount: number;
+  totalPrice: number;
+}
+
 interface SubmitProps {
-  formData: any; // Replace with proper type based on your form data structure
+  formData: IndividualFormData | BulkFormData | BoothFormData | SponsorFormData;
   totalPrice: number;
   formType: "individual" | "bulk" | "booth" | "sponsor";
 }
@@ -47,8 +113,8 @@ export default function Submit({
   };
 
   const sendFormDataEmail = async (
-    data: any,
-    type: string,
+    data: IndividualFormData | BulkFormData | BoothFormData | SponsorFormData,
+    type: "individual" | "bulk" | "booth" | "sponsor",
     paymentMethod: "card" | "eft"
   ) => {
     // Implement email sending logic here
