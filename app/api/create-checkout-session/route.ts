@@ -6,7 +6,7 @@ export async function POST(request: NextRequest) {
     const {
       amount,
       currency = "ZAR",
-      metadata,
+
       reference,
       formData,
       formType,
