@@ -51,7 +51,7 @@ export default function Home() {
       <main className="flex-grow flex flex-col items-center px-8 pb-8">
         <div className="max-w-5xl w-full shadow-2xl mb-6">
           <Image
-            src="/banner-2.png"
+            src="/banner-3.png"
             alt="Event Banner"
             width={1920}
             height={200}
@@ -181,7 +181,7 @@ export default function Home() {
         >
           <div className="shadow-lg transition-transform hover:scale-[1.02]">
             <Image
-              src="/lca-sponsor-2.png"
+              src="/lca-sponsor-3.png"
               alt="Event Banner"
               width={1920}
               height={200}
