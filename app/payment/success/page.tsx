@@ -43,7 +43,7 @@ function PaymentSuccessContent() {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              email: "jason@sachefs.co.za",
+              email: "jason@sachefs.co.za, infochef@sachefs.co.za",
               title: `Payment Successful - ${reference}`,
               message: `
                 <html>

@@ -254,7 +254,7 @@ export default function Submit({
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            email: "jason@sachefs.co.za",
+            email: "jason@sachefs.co.za, infochef@sachefs.co.za",
             title: `New ${
               type.charAt(0).toUpperCase() + type.slice(1)
             } Registration - ${reference}`,

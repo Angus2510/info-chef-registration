@@ -49,7 +49,7 @@ export default function Home() {
 
       {/* Main Content */}
       <main className="flex-grow flex flex-col items-center px-8 pb-8">
-        <div className="max-w-5xl w-full shadow-2xl mb-8">
+        <div className="max-w-5xl w-full shadow-2xl mb-6">
           {/* Registration type selection */}
           {!registrationType && (
             <div className="bg-white p-6 rounded-lg shadow-md">
@@ -162,6 +162,25 @@ export default function Home() {
           )}
         </div>
       </main>
+      {/* New Middle Banner */}
+      <div className="w-full flex justify-center mb-8">
+        <a
+          href="https://www.limpopochefs.co.za"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="max-w-4xl w-full"
+        >
+          <div className="shadow-lg transition-transform hover:scale-[1.02]">
+            <Image
+              src="/lca-sponsor-2.png"
+              alt="Event Banner"
+              width={1920}
+              height={200}
+              className="w-full object-cover rounded-lg"
+            />
+          </div>
+        </a>
+      </div>
 
       {/* Bottom Banner */}
       <div className="w-full shadow-lg">

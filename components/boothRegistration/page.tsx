@@ -100,7 +100,7 @@ export default function BoothRegistration() {
                 >
                   <label className="flex items-start">
                     <input
-                      type="radio"
+                      type="checkbox"
                       name="exhibitorSize"
                       value={option.size}
                       className="mt-1 mr-3"
@@ -141,7 +141,7 @@ export default function BoothRegistration() {
                 <div className="space-y-2 ml-4">
                   <label className="flex items-start">
                     <input
-                      type="radio"
+                      type="checkbox"
                       name="educationOption"
                       value="member_one_day"
                       className="mt-1 mr-3"
@@ -154,7 +154,7 @@ export default function BoothRegistration() {
                   </label>
                   <label className="flex items-start">
                     <input
-                      type="radio"
+                      type="checkbox"
                       name="educationOption"
                       value="member_two_days"
                       className="mt-1 mr-3"
@@ -176,7 +176,7 @@ export default function BoothRegistration() {
                 <div className="space-y-2 ml-4">
                   <label className="flex items-start">
                     <input
-                      type="radio"
+                      type="checkbox"
                       name="educationOption"
                       value="non_member_one_day"
                       className="mt-1 mr-3"
@@ -189,7 +189,7 @@ export default function BoothRegistration() {
                   </label>
                   <label className="flex items-start">
                     <input
-                      type="radio"
+                      type="checkbox"
                       name="educationOption"
                       value="non_member_two_days"
                       className="mt-1 mr-3"
@@ -223,7 +223,7 @@ export default function BoothRegistration() {
             <div className="bg-white p-4 rounded-md border">
               <label className="flex items-start">
                 <input
-                  type="radio"
+                  type="checkbox"
                   name="industryOption"
                   value="industry_two_days"
                   className="mt-1 mr-3"
