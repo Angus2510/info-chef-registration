@@ -50,9 +50,17 @@ export default function Home() {
       {/* Main Content */}
       <main className="flex-grow flex flex-col items-center px-8 pb-8">
         <div className="max-w-5xl w-full shadow-2xl mb-6">
+          <Image
+            src="/banner-2.png"
+            alt="Event Banner"
+            width={1920}
+            height={200}
+            className="w-full object-cover rounded-t-2xl border-b-4 border-[#243d8e]"
+          />
+
           {/* Registration type selection */}
           {!registrationType && (
-            <div className="bg-white p-6 rounded-lg shadow-md">
+            <div className="bg-white p-6 rounded-b shadow-md">
               <h2 className="text-xl font-semibold mb-6 text-center">
                 Choose Registration Type
               </h2>
@@ -162,8 +170,9 @@ export default function Home() {
           )}
         </div>
       </main>
-      {/* New Middle Banner */}
-      <div className="w-full flex justify-center mb-8">
+
+      {/* Bottom Banner */}
+      <div className="w-full shadow-lg">
         <a
           href="https://www.limpopochefs.co.za"
           target="_blank"
@@ -176,21 +185,10 @@ export default function Home() {
               alt="Event Banner"
               width={1920}
               height={200}
-              className="w-full object-cover rounded-lg"
+              className="w-full object-cover "
             />
           </div>
         </a>
-      </div>
-
-      {/* Bottom Banner */}
-      <div className="w-full shadow-lg">
-        <Image
-          src="/banner.png"
-          alt="Event Banner"
-          width={1920}
-          height={200}
-          className="w-full object-cover"
-        />
       </div>
     </div>
   );
