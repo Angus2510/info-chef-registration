@@ -86,7 +86,7 @@ function PaymentSuccessContent() {
                       ${formDetails}
                     </table>
                     <div style="margin-top: 20px; padding: 15px; background-color: #f8f9fa; border-radius: 5px;">
-                      <p>If you have any questions, please contact us at support@sachefs.co.za</p>
+                      <p>If you have any questions, please contact us at  infochef@sachefs.co.za</p>
                     </div>
                   </body>
                 </html>
