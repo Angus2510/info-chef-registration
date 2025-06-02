@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { validateRegistrationData } from "@/utils/validation";
 
 // Individual registration data type
 interface IndividualFormData {
@@ -88,6 +89,13 @@ export default function Submit({
     setIsProcessing(true);
 
     try {
+      // Validate form data before proceeding
+      if (!validateRegistrationData(formData, formType)) {
+        alert("Please ensure all required fields are filled in correctly");
+        setIsProcessing(false);
+        return;
+      }
+
       const reference = `REG-${Date.now()}`;
       const response = await fetch("/api/create-checkout-session", {
         method: "POST",
@@ -123,6 +131,12 @@ export default function Submit({
 
   const handlePayLater = async () => {
     try {
+      // Validate form data before proceeding
+      if (!validateRegistrationData(formData, formType)) {
+        alert("Please ensure all required fields are filled in correctly");
+        return;
+      }
+
       const reference = `REG-${Date.now()}`;
       // Generate EFT instructions
       await sendFormDataEmail(formData, formType, "eft");
@@ -144,6 +158,13 @@ export default function Submit({
     paymentMethod: "card" | "eft"
   ) => {
     try {
+      // Validate form data before sending emails
+      if (!validateRegistrationData(data, type)) {
+        throw new Error(
+          "Cannot send email - required registration data is missing"
+        );
+      }
+
       // Get the user's email based on form type
       const userEmail =
         "email" in data
@@ -163,8 +184,8 @@ export default function Submit({
         .map(([key, value]) => {
           // Format the key to be more readable
           const formattedKey = key
-            .replace(/([A-Z])/g, " $1") // Add space before capital letters
-            .replace(/^./, (str) => str.toUpperCase()); // Capitalize first letter
+            .replace(/([A-Z])/g, " $1")
+            .replace(/^./, (str) => str.toUpperCase());
 
           // Format the value based on its type
           let formattedValue = value;
@@ -244,7 +265,7 @@ export default function Submit({
               ${formDataTable}
             </table>
             <div style="margin-top: 20px; padding: 15px; background-color: #f8f9fa; border-radius: 5px;">
-              <p>If you have any questions, please contact us at  infochef@sachefs.co.za</p>
+              <p>If you have any questions, please contact us at infochef@sachefs.co.za</p>
             </div>
           </body>
         </html>

@@ -30,6 +30,10 @@ export default function IndividualRegistration() {
   useEffect(() => {
     const options: PricingOption[] = [];
 
+    // Reset selected pricing when attendee type changes
+    setSelectedPricing("");
+    setTotalPrice(0);
+
     if (attendeeType === "scholar") {
       options.push({
         id: `scholar-${numberOfDays}`,
@@ -39,24 +43,26 @@ export default function IndividualRegistration() {
         price: numberOfDays === "one" ? 110 : 220,
       });
     } else if (attendeeType === "student" || attendeeType === "general") {
-      const typeLabel =
-        attendeeType === "student" ? "Culinary Student" : "General Admission";
-      const basePrice = isMember ? 110 : 150;
-      const twoDayPrice = isMember ? 200 : 250;
+      if (isMember !== null) {
+        // Only add pricing options if membership status is selected
+        const typeLabel =
+          attendeeType === "student" ? "Culinary Student" : "General Admission";
+        const basePrice = isMember ? 110 : 150;
+        const twoDayPrice = isMember ? 200 : 250;
 
-      options.push({
-        id: `${attendeeType}-${numberOfDays}-${
-          isMember ? "member" : "nonmember"
-        }`,
-        label: `${typeLabel} - ${
-          numberOfDays === "one" ? "One Day" : "Two Days"
-        } ${isMember ? "(Member)" : "(Non-member)"}`,
-        price: numberOfDays === "one" ? basePrice : twoDayPrice,
-      });
+        options.push({
+          id: `${attendeeType}-${numberOfDays}-${
+            isMember ? "member" : "nonmember"
+          }`,
+          label: `${typeLabel} - ${
+            numberOfDays === "one" ? "One Day" : "Two Days"
+          } ${isMember ? "(Member)" : "(Non-member)"}`,
+          price: numberOfDays === "one" ? basePrice : twoDayPrice,
+        });
+      }
     }
 
     setPricingOptions(options);
-    setSelectedPricing("");
   }, [attendeeType, isMember, numberOfDays]);
 
   // Update total price when pricing selection changes
@@ -70,14 +76,47 @@ export default function IndividualRegistration() {
   // Handle form submission
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedPricing) return;
 
-    // Validate date selection for one day option
-    if (numberOfDays === "one" && !selectedDate) {
-      alert("Please select a date");
+    // Basic required fields validation
+    if (!name || !idNumber || !email || !contactNumber || !invoicingDetails) {
+      alert("Please fill in all personal information fields");
       return;
     }
 
+    // Attendee type validation
+    if (!attendeeType) {
+      alert("Please select an attendee type");
+      return;
+    }
+
+    // Membership status validation for student/general
+    if (
+      (attendeeType === "student" || attendeeType === "general") &&
+      !document.querySelector('input[name="memberStatus"]:checked')
+    ) {
+      alert("Please select your membership status");
+      return;
+    }
+
+    // Number of days validation
+    if (!numberOfDays) {
+      alert("Please select number of days");
+      return;
+    }
+
+    // Date validation for one-day option
+    if (numberOfDays === "one" && !selectedDate) {
+      alert("Please select a specific date");
+      return;
+    }
+
+    // Pricing validation
+    if (!selectedPricing || totalPrice === 0) {
+      alert("Please select a ticket option");
+      return;
+    }
+
+    // If all validations pass, proceed with submission
     console.log("Registration submitted", {
       name,
       idNumber,
@@ -92,6 +131,7 @@ export default function IndividualRegistration() {
       selectedPricing,
       totalPrice,
     });
+
     alert("Registration submitted successfully!");
   };
   return (
@@ -290,6 +330,7 @@ export default function IndividualRegistration() {
                       checked={numberOfDays === "one"}
                       onChange={() => setNumberOfDays("one")}
                       className="mr-2"
+                      required
                     />
                     <span>One Day</span>
                   </label>

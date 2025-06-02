@@ -3,6 +3,67 @@
 import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 
+// Validation function for form data
+function validateFormData(formData: any, type: string): boolean {
+  if (!formData || typeof formData !== "object") return false;
+
+  switch (type) {
+    case "individual":
+      return !!(
+        formData.name &&
+        formData.idNumber &&
+        formData.email &&
+        formData.contactNumber &&
+        formData.invoicingDetails &&
+        formData.attendeeType &&
+        formData.numberOfDays &&
+        formData.selectedPricing &&
+        formData.totalPrice &&
+        (formData.numberOfDays === "two" || formData.selectedDate)
+      );
+
+    case "bulk":
+      return !!(
+        formData.organizationType &&
+        formData.schoolName &&
+        formData.contactPersonName &&
+        formData.contactPersonEmail &&
+        formData.contactPersonPhone &&
+        formData.numberOfDays &&
+        formData.totalPrice &&
+        (formData.memberStudents ||
+          formData.nonMemberStudents ||
+          formData.memberTeachers ||
+          formData.nonMemberTeachers)
+      );
+
+    case "booth":
+      return !!(
+        formData.exhibitorType &&
+        formData.companyName &&
+        formData.companyAddress &&
+        formData.companyEmail &&
+        formData.companyContactNumber &&
+        formData.companyContactPerson &&
+        formData.totalPrice
+      );
+
+    case "sponsor":
+      return !!(
+        formData.sponsorshipType &&
+        formData.companyName &&
+        formData.companyAddress &&
+        formData.companyEmail &&
+        formData.companyContactNumber &&
+        formData.companyContactPerson &&
+        formData.totalPrice
+      );
+
+    default:
+      return false;
+  }
+}
+
 function PaymentSuccessContent() {
   const searchParams = useSearchParams();
   const reference = searchParams.get("reference");
@@ -13,17 +74,22 @@ function PaymentSuccessContent() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Only send emails for card payments
-    if (
-      reference &&
-      type &&
-      encodedData &&
-      !emailSent &&
-      paymentMethod === "card"
-    ) {
-      try {
-        const formData = JSON.parse(atob(encodedData));
+    if (!reference || !type || !encodedData) {
+      setError("Missing required parameters");
+      return;
+    }
 
+    try {
+      const formData = JSON.parse(atob(encodedData));
+
+      // Validate form data before proceeding
+      if (!validateFormData(formData, type)) {
+        setError("Invalid or incomplete registration data");
+        return;
+      }
+
+      // Only proceed with email sending for valid data and card payments
+      if (!emailSent && paymentMethod === "card") {
         const userEmail =
           "email" in formData
             ? formData.email
@@ -43,7 +109,6 @@ function PaymentSuccessContent() {
           .join("");
 
         Promise.all([
-          // Admin notification
           fetch("/api/send-email", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -73,7 +138,6 @@ function PaymentSuccessContent() {
               `,
             }),
           }),
-          // User confirmation (if email exists)
           userEmail &&
             fetch("/api/send-email", {
               method: "POST",
@@ -116,10 +180,10 @@ function PaymentSuccessContent() {
             console.error("Error sending confirmation emails:", error);
             setError("Failed to send confirmation emails");
           });
-      } catch (error) {
-        console.error("Error processing registration data:", error);
-        setError("Failed to process registration data");
       }
+    } catch (error) {
+      console.error("Error processing registration data:", error);
+      setError("Failed to process registration data");
     }
   }, [reference, type, encodedData, emailSent, paymentMethod]);
 
@@ -127,29 +191,39 @@ function PaymentSuccessContent() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="max-w-md w-full space-y-8 p-8 bg-white rounded-lg shadow">
         <div className="text-center">
-          <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
-            Registration Successful!
-          </h2>
-          <p className="mt-2 text-sm text-gray-600">
-            Thank you for registering! Your reference number is: {reference}
-          </p>
-          {paymentMethod === "eft" ? (
-            <p className="mt-4 text-sm text-gray-600">
-              Please check your email for payment instructions.
-            </p>
-          ) : (
-            !error && (
-              <p className="mt-4 text-sm text-gray-500">
-                {emailSent
-                  ? "A confirmation email has been sent to your registered email address."
-                  : "Sending confirmation email..."}
+          {error ? (
+            <>
+              <h2 className="mt-6 text-3xl font-extrabold text-red-600">
+                Registration Error
+              </h2>
+              <p className="mt-2 text-sm text-gray-600">{error}</p>
+              <p className="mt-4 text-sm text-gray-600">
+                Please try registering again or contact support with your
+                reference number: {reference}
               </p>
-            )
-          )}
-          {error && (
-            <p className="mt-4 text-sm text-red-600">
-              {error}. Please contact support with your reference number.
-            </p>
+            </>
+          ) : (
+            <>
+              <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
+                Registration Successful!
+              </h2>
+              <p className="mt-2 text-sm text-gray-600">
+                Thank you for registering! Your reference number is: {reference}
+              </p>
+              {paymentMethod === "eft" ? (
+                <p className="mt-4 text-sm text-gray-600">
+                  Please check your email for payment instructions.
+                </p>
+              ) : (
+                !error && (
+                  <p className="mt-4 text-sm text-gray-500">
+                    {emailSent
+                      ? "A confirmation email has been sent to your registered email address."
+                      : "Sending confirmation email..."}
+                  </p>
+                )
+              )}
+            </>
           )}
         </div>
       </div>
