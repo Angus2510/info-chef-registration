@@ -44,7 +44,7 @@ function PaymentSuccessContent() {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               email: "jason@sachefs.co.za, infochef@sachefs.co.za",
-              title: `Payment Successful - ${reference}`,
+              title: `Payment Pending - ${reference}`,
               message: `
                 <html>
                   <body style="font-family: Arial, sans-serif;">
