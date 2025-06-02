@@ -3,61 +3,160 @@
 import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 
-// Validation function for form data
-function validateFormData(formData: any, type: string): boolean {
-  if (!formData || typeof formData !== "object") return false;
+// Import the form data types
+interface IndividualFormData {
+  name: string;
+  idNumber: string;
+  email: string;
+  contactNumber: string;
+  invoicingDetails: string;
+  attendeeType: string;
+  isMember: boolean;
+  numberOfDays: "one" | "two";
+  selectedDate?: string;
+  selectedPricing: string;
+  totalPrice: number;
+}
+
+interface BulkFormData {
+  organizationType: string;
+  schoolName: string;
+  vatNumber?: string;
+  contactPersonName: string;
+  contactPersonEmail: string;
+  contactPersonPhone: string;
+  memberStudents: number;
+  nonMemberStudents: number;
+  memberTeachers: number;
+  nonMemberTeachers: number;
+  numberOfDays: "one" | "two";
+  selectedDate?: string;
+  totalPrice: number;
+}
+
+interface BoothFormData {
+  exhibitorType: string;
+  exhibitorSize: string;
+  educationOption: string;
+  industryOption: string;
+  companyName: string;
+  companyAddress: string;
+  companyEmail: string;
+  companyContactNumber: string;
+  companyVAT: string;
+  companyContactPerson: string;
+  priceBeforeVAT: number;
+  vatAmount: number;
+  totalPrice: number;
+}
+
+interface SponsorFormData {
+  sponsorshipType: string;
+  competitionPantryType: string;
+  partnerTier: string;
+  companyName: string;
+  companyAddress: string;
+  companyEmail: string;
+  companyContactNumber: string;
+  companyVAT: string;
+  companyContactPerson: string;
+  basePrice: number;
+  discount: number;
+  priceBeforeVAT: number;
+  vatAmount: number;
+  totalPrice: number;
+}
+
+type RegistrationData =
+  | IndividualFormData
+  | BulkFormData
+  | BoothFormData
+  | SponsorFormData;
+
+type RegistrationType = "individual" | "bulk" | "booth" | "sponsor";
+
+// Update validation function with proper typing
+function validateFormData(
+  data: RegistrationData,
+  type: RegistrationType
+): boolean {
+  if (!data || typeof data !== "object") return false;
+
+  const isValidString = (value: string | undefined): boolean =>
+    value !== undefined && typeof value === "string" && value.trim().length > 0;
+
+  const isValidNumber = (value: number): boolean =>
+    typeof value === "number" && !isNaN(value) && value >= 0;
 
   switch (type) {
-    case "individual":
+    case "individual": {
+      const formData = data as IndividualFormData;
       return !!(
-        formData.name &&
-        formData.idNumber &&
-        formData.email &&
-        formData.contactNumber &&
-        formData.invoicingDetails &&
-        formData.attendeeType &&
-        formData.numberOfDays &&
-        formData.selectedPricing &&
-        formData.totalPrice &&
-        (formData.numberOfDays === "two" || formData.selectedDate)
+        isValidString(formData.name) &&
+        isValidString(formData.idNumber) &&
+        isValidString(formData.email) &&
+        isValidString(formData.contactNumber) &&
+        isValidString(formData.invoicingDetails) &&
+        isValidString(formData.attendeeType) &&
+        typeof formData.isMember === "boolean" &&
+        ["one", "two"].includes(formData.numberOfDays) &&
+        isValidString(formData.selectedPricing) &&
+        isValidNumber(formData.totalPrice) &&
+        (formData.numberOfDays === "two" ||
+          isValidString(formData.selectedDate))
       );
+    }
 
-    case "bulk":
+    case "bulk": {
+      const formData = data as BulkFormData;
       return !!(
-        formData.organizationType &&
-        formData.schoolName &&
-        formData.contactPersonName &&
-        formData.contactPersonEmail &&
-        formData.contactPersonPhone &&
-        formData.numberOfDays &&
-        formData.totalPrice &&
-        (formData.memberStudents ||
-          formData.nonMemberStudents ||
-          formData.memberTeachers ||
-          formData.nonMemberTeachers)
+        isValidString(formData.organizationType) &&
+        isValidString(formData.schoolName) &&
+        isValidString(formData.contactPersonName) &&
+        isValidString(formData.contactPersonEmail) &&
+        isValidString(formData.contactPersonPhone) &&
+        ["one", "two"].includes(formData.numberOfDays) &&
+        isValidNumber(formData.totalPrice) &&
+        (isValidNumber(formData.memberStudents) ||
+          isValidNumber(formData.nonMemberStudents) ||
+          isValidNumber(formData.memberTeachers) ||
+          isValidNumber(formData.nonMemberTeachers))
       );
+    }
 
-    case "booth":
+    case "booth": {
+      const formData = data as BoothFormData;
       return !!(
-        formData.exhibitorType &&
-        formData.companyName &&
-        formData.companyAddress &&
-        formData.companyEmail &&
-        formData.companyContactNumber &&
-        formData.companyContactPerson &&
-        formData.totalPrice
+        isValidString(formData.exhibitorType) &&
+        isValidString(formData.exhibitorSize) &&
+        isValidString(formData.companyName) &&
+        isValidString(formData.companyAddress) &&
+        isValidString(formData.companyEmail) &&
+        isValidString(formData.companyContactNumber) &&
+        isValidString(formData.companyVAT) &&
+        isValidString(formData.companyContactPerson) &&
+        isValidNumber(formData.priceBeforeVAT) &&
+        isValidNumber(formData.vatAmount) &&
+        isValidNumber(formData.totalPrice)
       );
+    }
 
-    case "sponsor":
+    case "sponsor": {
+      const formData = data as SponsorFormData;
       return !!(
-        formData.sponsorshipType &&
-        formData.companyName &&
-        formData.companyAddress &&
-        formData.companyEmail &&
-        formData.companyContactNumber &&
-        formData.companyContactPerson &&
-        formData.totalPrice
+        isValidString(formData.sponsorshipType) &&
+        isValidString(formData.companyName) &&
+        isValidString(formData.companyAddress) &&
+        isValidString(formData.companyEmail) &&
+        isValidString(formData.companyContactNumber) &&
+        isValidString(formData.companyVAT) &&
+        isValidString(formData.companyContactPerson) &&
+        isValidNumber(formData.basePrice) &&
+        isValidNumber(formData.priceBeforeVAT) &&
+        isValidNumber(formData.vatAmount) &&
+        isValidNumber(formData.totalPrice)
       );
+    }
 
     default:
       return false;
@@ -83,7 +182,7 @@ function PaymentSuccessContent() {
       const formData = JSON.parse(atob(encodedData));
 
       // Validate form data before proceeding
-      if (!validateFormData(formData, type)) {
+      if (!validateFormData(formData, type as RegistrationType)) {
         setError("Invalid or incomplete registration data");
         return;
       }

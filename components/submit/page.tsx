@@ -10,7 +10,7 @@ interface IndividualFormData {
   email: string;
   contactNumber: string;
   invoicingDetails: string;
-  attendeeType: string;
+  attendeeType: "student" | "general" | "scholar";
   isMember: boolean;
   numberOfDays: "one" | "two";
   selectedDate?: string;
@@ -20,7 +20,7 @@ interface IndividualFormData {
 
 // Bulk registration data type
 interface BulkFormData {
-  organizationType: string;
+  organizationType: "school" | "company";
   schoolName: string;
   vatNumber?: string;
   contactPersonName: string;
@@ -37,8 +37,8 @@ interface BulkFormData {
 
 // Booth registration data type
 interface BoothFormData {
-  exhibitorType: string;
-  exhibitorSize: string;
+  exhibitorType: "education" | "industry";
+  exhibitorSize: "2sqm" | "4sqm" | "6sqm";
   educationOption: string;
   industryOption: string;
   companyName: string;

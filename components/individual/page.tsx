@@ -18,7 +18,9 @@ export default function IndividualRegistration() {
   const [invoicingDetails, setInvoicingDetails] = useState<string>("");
 
   // Ticket selection
-  const [attendeeType, setAttendeeType] = useState<string>("");
+  const [attendeeType, setAttendeeType] = useState<
+    "student" | "general" | "scholar" | ""
+  >("");
   const [isMember, setIsMember] = useState<boolean>(false);
   const [numberOfDays, setNumberOfDays] = useState<"one" | "two">("one");
   const [selectedPricing, setSelectedPricing] = useState<string>("");
@@ -123,7 +125,7 @@ export default function IndividualRegistration() {
       email,
       contactNumber,
       invoicingDetails,
-      attendeeType,
+      attendeeType: attendeeType as "student" | "general" | "scholar",
       isMember,
       numberOfDays,
       selectedDate:
@@ -515,7 +517,7 @@ export default function IndividualRegistration() {
               email,
               contactNumber,
               invoicingDetails,
-              attendeeType,
+              attendeeType: attendeeType as "student" | "general" | "scholar",
               isMember,
               numberOfDays,
               selectedDate:
