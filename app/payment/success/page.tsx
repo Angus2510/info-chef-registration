@@ -70,13 +70,13 @@ function PaymentSuccessContent() {
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
                 email: userEmail,
-                title: `Payment Confirmation - SA Chefs Registration`,
+                title: `Payment Application - SA Chefs Registration`,
                 message: `
                 <html>
                   <body style="font-family: Arial, sans-serif;">
                     <h2 style="color: #2c5282;">Payment Successful</h2>
                     <div style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
-                      <p>Thank you for your payment! Your registration is now complete.</p>
+                      <p>Thank you for your application! Your registration is now complete.</p>
                       <p><strong>Reference Number:</strong> ${reference}</p>
                       <p><strong>Registration Type:</strong> ${type}</p>
                       <p><strong>Payment Date:</strong> ${new Date().toLocaleString()}</p>
@@ -113,10 +113,10 @@ function PaymentSuccessContent() {
       <div className="max-w-md w-full space-y-8 p-8 bg-white rounded-lg shadow">
         <div className="text-center">
           <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
-            Payment Successful!
+            Payment Pending!
           </h2>
           <p className="mt-2 text-sm text-gray-600">
-            Thank you for your payment. Your reference number is: {reference}
+            Thank you for your interest. Your reference number is: {reference}
           </p>
           {error ? (
             <p className="mt-4 text-sm text-red-600">
