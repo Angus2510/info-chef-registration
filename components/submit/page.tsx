@@ -123,12 +123,15 @@ export default function Submit({
 
   const handlePayLater = async () => {
     try {
+      const reference = `REG-${Date.now()}`;
       // Generate EFT instructions
       await sendFormDataEmail(formData, formType, "eft");
 
-      alert(
-        "Registration successful! EFT instructions have been sent to your email."
-      );
+      // Encode the form data for URL
+      const encodedData = btoa(JSON.stringify(formData));
+
+      // Redirect to success page with parameters
+      window.location.href = `/payment/success?reference=${reference}&type=${formType}&data=${encodedData}`;
     } catch (error) {
       console.error("Failed to process EFT registration:", error);
       alert("Failed to process registration. Please try again.");
