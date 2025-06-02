@@ -20,7 +20,7 @@ interface IndividualFormData {
 
 // Bulk registration data type
 interface BulkFormData {
-  organizationType: "school" | "company";
+  organizationType: "highschool" | "culinary" | "company"; // Updated to match actual values
   schoolName: string;
   vatNumber?: string;
   contactPersonName: string;
@@ -37,10 +37,10 @@ interface BulkFormData {
 
 // Booth registration data type
 interface BoothFormData {
-  exhibitorType: "education" | "industry";
-  exhibitorSize: "2sqm" | "4sqm" | "6sqm";
-  educationOption: string;
-  industryOption: string;
+  exhibitorSize?: "2sqm" | "4sqm" | "6sqm" | "";
+  educationOption?: string;
+  industryOption?: string;
+  exhibitorType?: string; // Make it optional and accept any string
   companyName: string;
   companyAddress: string;
   companyEmail: string;

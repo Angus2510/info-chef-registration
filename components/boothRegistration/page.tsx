@@ -5,8 +5,10 @@ import Submit from "@/components/submit/page";
 
 export default function BoothRegistration() {
   // State for form fields
-  const [exhibitorType] = useState<string>("");
-  const [exhibitorSize, setExhibitorSize] = useState<string>("");
+
+  const [exhibitorSize, setExhibitorSize] = useState<
+    "2sqm" | "4sqm" | "6sqm" | ""
+  >("");
   const [educationOption, setEducationOption] = useState<string>("");
   const [industryOption, setIndustryOption] = useState<string>("");
 
@@ -47,8 +49,7 @@ export default function BoothRegistration() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Form submitted", {
-      exhibitorType,
-      exhibitorSize,
+      exhibitorSize: exhibitorSize === "" ? undefined : exhibitorSize,
       educationOption,
       industryOption,
       companyName,
@@ -104,7 +105,11 @@ export default function BoothRegistration() {
                       name="exhibitorSize"
                       value={option.size}
                       className="mt-1 mr-3"
-                      onChange={() => setExhibitorSize(option.size)}
+                      onChange={() =>
+                        setExhibitorSize(
+                          option.size as "2sqm" | "4sqm" | "6sqm"
+                        )
+                      }
                     />
                     <div>
                       <p className="font-medium">{option.size}</p>
@@ -379,7 +384,6 @@ export default function BoothRegistration() {
         <div className="flex justify-center">
           <Submit
             formData={{
-              exhibitorType,
               exhibitorSize,
               educationOption,
               industryOption,

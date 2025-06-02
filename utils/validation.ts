@@ -13,7 +13,7 @@ interface IndividualFormData {
 }
 
 interface BulkFormData {
-  organizationType: "school" | "company";
+  organizationType: "highschool" | "culinary" | "company";
   schoolName: string;
   vatNumber?: string;
   contactPersonName: string;
@@ -29,10 +29,10 @@ interface BulkFormData {
 }
 
 interface BoothFormData {
-  exhibitorType: "education" | "industry";
-  exhibitorSize: "2sqm" | "4sqm" | "6sqm";
+  exhibitorSize?: "2sqm" | "4sqm" | "6sqm" | "";
   educationOption?: string;
   industryOption?: string;
+  exhibitorType?: string;
   companyName: string;
   companyAddress: string;
   companyEmail: string;
@@ -46,8 +46,8 @@ interface BoothFormData {
 
 interface SponsorFormData {
   sponsorshipType: string;
-  competitionPantryType?: string;
-  partnerTier?: string;
+  competitionPantryType: string;
+  partnerTier: string;
   companyName: string;
   companyAddress: string;
   companyEmail: string;
@@ -72,7 +72,6 @@ export const validateRegistrationData = (
   data: RegistrationData,
   type: RegistrationType
 ): boolean => {
-  // Update the isValidString function to handle optional values
   const isValidString = (value: string | undefined): boolean =>
     value !== undefined && typeof value === "string" && value.trim().length > 0;
 
@@ -101,19 +100,19 @@ export const validateRegistrationData = (
     case "bulk": {
       const formData = data as BulkFormData;
       return !!(
-        ["school", "company"].includes(formData.organizationType) &&
+        ["highschool", "culinary", "company"].includes(
+          formData.organizationType
+        ) &&
         isValidString(formData.schoolName) &&
         isValidString(formData.contactPersonName) &&
         isValidString(formData.contactPersonEmail) &&
         isValidString(formData.contactPersonPhone) &&
         ["one", "two"].includes(formData.numberOfDays) &&
-        (formData.organizationType !== "company" ||
-          isValidString(formData.vatNumber)) &&
+        isValidNumber(formData.memberStudents) &&
+        isValidNumber(formData.nonMemberStudents) &&
+        isValidNumber(formData.memberTeachers) &&
+        isValidNumber(formData.nonMemberTeachers) &&
         isValidNumber(formData.totalPrice) &&
-        (isValidNumber(formData.memberStudents) ||
-          isValidNumber(formData.nonMemberStudents) ||
-          isValidNumber(formData.memberTeachers) ||
-          isValidNumber(formData.nonMemberTeachers)) &&
         (formData.numberOfDays === "two" ||
           isValidString(formData.selectedDate))
       );
@@ -122,8 +121,6 @@ export const validateRegistrationData = (
     case "booth": {
       const formData = data as BoothFormData;
       return !!(
-        ["education", "industry"].includes(formData.exhibitorType) &&
-        ["2sqm", "4sqm", "6sqm"].includes(formData.exhibitorSize) &&
         isValidString(formData.companyName) &&
         isValidString(formData.companyAddress) &&
         isValidString(formData.companyEmail) &&
@@ -140,6 +137,8 @@ export const validateRegistrationData = (
       const formData = data as SponsorFormData;
       return !!(
         isValidString(formData.sponsorshipType) &&
+        isValidString(formData.competitionPantryType) &&
+        isValidString(formData.partnerTier) &&
         isValidString(formData.companyName) &&
         isValidString(formData.companyAddress) &&
         isValidString(formData.companyEmail) &&
@@ -147,6 +146,7 @@ export const validateRegistrationData = (
         isValidString(formData.companyVAT) &&
         isValidString(formData.companyContactPerson) &&
         isValidNumber(formData.basePrice) &&
+        isValidNumber(formData.discount) &&
         isValidNumber(formData.priceBeforeVAT) &&
         isValidNumber(formData.vatAmount) &&
         isValidNumber(formData.totalPrice)

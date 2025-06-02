@@ -5,7 +5,9 @@ import Submit from "../submit/page";
 
 export default function BulkRegistration() {
   // State for organization type selection
-  const [organizationType, setOrganizationType] = useState<string>("");
+  type OrganizationType = "highschool" | "culinary" | "company" | "";
+  const [organizationType, setOrganizationType] =
+    useState<OrganizationType>("");
 
   // State for form fields
   const [schoolName, setSchoolName] = useState<string>("");
@@ -644,7 +646,7 @@ export default function BulkRegistration() {
         <div className="flex justify-center">
           <Submit
             formData={{
-              organizationType,
+              organizationType: organizationType || "highschool", // Provide default value
               schoolName,
               vatNumber,
               contactPersonName,
@@ -656,9 +658,7 @@ export default function BulkRegistration() {
               nonMemberTeachers,
               numberOfDays,
               selectedDate:
-                numberOfDays === "one"
-                  ? `${selectedDate} May 2025`
-                  : "Both days",
+                numberOfDays === "one" ? `${selectedDate} May 2025` : undefined,
               totalPrice,
             }}
             totalPrice={totalPrice}
