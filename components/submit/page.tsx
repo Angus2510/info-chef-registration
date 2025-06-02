@@ -130,8 +130,8 @@ export default function Submit({
       // Encode the form data for URL
       const encodedData = btoa(JSON.stringify(formData));
 
-      // Redirect to success page with parameters
-      window.location.href = `/payment/success?reference=${reference}&type=${formType}&data=${encodedData}`;
+      // Add method=eft to the URL
+      window.location.href = `/payment/success?reference=${reference}&type=${formType}&data=${encodedData}&method=eft`;
     } catch (error) {
       console.error("Failed to process EFT registration:", error);
       alert("Failed to process registration. Please try again.");

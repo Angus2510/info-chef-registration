@@ -49,14 +49,14 @@ function PaymentSuccessContent() {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               email: "jason@sachefs.co.za, infochef@sachefs.co.za",
-              title: `Payment ${
-                paymentMethod === "card" ? "Successful" : "Pending"
+              title: `Registration ${
+                paymentMethod === "card" ? "Completed" : "Pending Payment"
               } - ${reference}`,
               message: `
                 <html>
                   <body style="font-family: Arial, sans-serif;">
-                    <h2 style="color: #2c5282;">Payment ${
-                      paymentMethod === "card" ? "Successful" : "Pending"
+                    <h2 style="color: #2c5282;">Registration ${
+                      paymentMethod === "card" ? "Completed" : "Pending Payment"
                     }</h2>
                     <div style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
                       <p><strong>Reference:</strong> ${reference}</p>
@@ -80,21 +80,17 @@ function PaymentSuccessContent() {
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
                 email: userEmail,
-                title: `Registration ${
-                  paymentMethod === "card" ? "Successful" : "Pending"
-                } - SA Chefs Registration`,
+                title: `Registration Confirmation - SA Chefs`,
                 message: `
                 <html>
                   <body style="font-family: Arial, sans-serif;">
-                    <h2 style="color: #2c5282;">Registration ${
-                      paymentMethod === "card" ? "Successful" : "Pending"
-                    }</h2>
+                    <h2 style="color: #2c5282;">Registration Confirmation</h2>
                     <div style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
-                      <p>Thank you for your registration!</p>
+                      <p>Thank you for registering!</p>
                       ${
                         paymentMethod === "card"
-                          ? "<p>Your payment has been successfully processed.</p>"
-                          : "<p>Your registration is complete. Please note that payment is still pending.</p><p>You will receive an email with the payment details shortly.</p>"
+                          ? "<p>Your registration and payment have been completed successfully.</p>"
+                          : "<p>Your registration has been received. Please note that payment is still pending.</p><p>You will receive an email with the payment details shortly.</p>"
                       }
                       <p><strong>Reference Number:</strong> ${reference}</p>
                       <p><strong>Registration Type:</strong> ${type}</p>
@@ -121,8 +117,8 @@ function PaymentSuccessContent() {
             setError("Failed to send confirmation emails");
           });
       } catch (error) {
-        console.error("Error processing success data:", error);
-        setError("Failed to process payment data");
+        console.error("Error processing registration data:", error);
+        setError("Failed to process registration data");
       }
     }
   }, [reference, type, encodedData, emailSent, paymentMethod]);
@@ -132,32 +128,28 @@ function PaymentSuccessContent() {
       <div className="max-w-md w-full space-y-8 p-8 bg-white rounded-lg shadow">
         <div className="text-center">
           <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
-            {paymentMethod === "card"
-              ? "Payment Successful!"
-              : "Registration Complete!"}
+            Registration Successful!
           </h2>
           <p className="mt-2 text-sm text-gray-600">
-            Thank you for your{" "}
-            {paymentMethod === "card" ? "payment" : "registration"}. Your
-            reference number is: {reference}
+            Thank you for registering! Your reference number is: {reference}
           </p>
-          {paymentMethod === "eft" && (
+          {paymentMethod === "eft" ? (
             <p className="mt-4 text-sm text-gray-600">
               Please check your email for payment instructions.
             </p>
-          )}
-          {error ? (
-            <p className="mt-4 text-sm text-red-600">
-              {error}. Please contact support with your reference number.
-            </p>
           ) : (
-            paymentMethod === "card" && (
+            !error && (
               <p className="mt-4 text-sm text-gray-500">
                 {emailSent
-                  ? "Confirmation email has been sent to your registered email address."
+                  ? "A confirmation email has been sent to your registered email address."
                   : "Sending confirmation email..."}
               </p>
             )
+          )}
+          {error && (
+            <p className="mt-4 text-sm text-red-600">
+              {error}. Please contact support with your reference number.
+            </p>
           )}
         </div>
       </div>
