@@ -74,9 +74,10 @@ function PaymentSuccessContent() {
                 message: `
                 <html>
                   <body style="font-family: Arial, sans-serif;">
-                    <h2 style="color: #2c5282;">Payment Successful</h2>
+                    <h2 style="color: #2c5282;">Payment Pending</h2>
                     <div style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
-                      <p>Thank you for your application! Your registration is now complete.</p>
+                      <p>Thank you for your application! Your registration is now complete. Please note that payment is still pending.</p>  
+                      <p>You will receive an email with the payment details</p>
                       <p><strong>Reference Number:</strong> ${reference}</p>
                       <p><strong>Registration Type:</strong> ${type}</p>
                       <p><strong>Payment Date:</strong> ${new Date().toLocaleString()}</p>
