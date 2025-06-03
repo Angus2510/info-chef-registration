@@ -145,19 +145,35 @@ export default function Submit({
       const reference = `REG-${Date.now()}`;
 
       // Save to database first
-      await saveRegistrationToDatabase(formData, formType, reference, "eft");
+      try {
+        await saveRegistrationToDatabase(formData, formType, reference, "eft");
+      } catch (dbError) {
+        console.error("Database save error:", dbError);
+        throw new Error("Failed to save registration");
+      }
 
-      // Generate EFT instructions
-      await sendFormDataEmail(formData, formType, "eft");
+      // Send email
+      try {
+        await sendFormDataEmail(formData, formType, "eft");
+      } catch (emailError) {
+        console.error("Email send error:", emailError);
+        // Continue even if email fails
+      }
 
       // Encode the form data for URL
-      const encodedData = btoa(JSON.stringify(formData));
+      const encodedData = btoa(
+        JSON.stringify({
+          ...formData,
+          reference,
+          type: formType,
+        })
+      );
 
       // Add method=eft to the URL
       window.location.href = `/payment/success?reference=${reference}&type=${formType}&data=${encodedData}&method=eft`;
     } catch (error) {
       console.error("Failed to process EFT registration:", error);
-      alert("Failed to process registration. Please try again.");
+      alert("Registration failed. Please try again or contact support.");
     }
   };
 

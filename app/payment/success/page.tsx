@@ -14,6 +14,7 @@ function PaymentSuccessContent() {
   const paymentMethod = searchParams.get("method") || "card";
   const [emailSent, setEmailSent] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
   useEffect(() => {
     if (!reference || !type || !encodedData) {
       setError("Missing required parameters");
@@ -23,8 +24,10 @@ function PaymentSuccessContent() {
     try {
       const formData = JSON.parse(atob(encodedData));
 
-      // Use the imported validation function
+      console.log("Decoded form data:", formData); // Add logging
+
       if (!validateRegistrationData(formData, type as RegistrationType)) {
+        console.error("Validation failed:", { formData, type });
         setError("Invalid or incomplete registration data");
         return;
       }
