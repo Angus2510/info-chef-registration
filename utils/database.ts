@@ -1,14 +1,18 @@
 "use server";
 import { PrismaClient } from "@prisma/client";
 
-// Prevent multiple instances of Prisma Client in development
-const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined;
-};
+// Extend NodeJS.Global to include prisma property
+declare global {
+  // eslint-disable-next-line no-var
+  var prisma: PrismaClient | undefined;
+}
 
-export const prisma = globalForPrisma.prisma ?? new PrismaClient();
+// Create a single instance of PrismaClient for the entire app
+const prisma = global.prisma || new PrismaClient();
 
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+if (process.env.NODE_ENV !== "production") {
+  global.prisma = prisma;
+}
 
 interface IndividualFormData {
   name: string;
@@ -73,11 +77,19 @@ interface SponsorFormData {
   totalPrice: number;
 }
 
+type RegistrationFormData =
+  | IndividualFormData
+  | BulkFormData
+  | BoothFormData
+  | SponsorFormData;
+type RegistrationType = "individual" | "bulk" | "booth" | "sponsor";
+type PaymentMethod = "card" | "eft";
+
 export async function saveRegistrationToDatabase(
-  formData: IndividualFormData | BulkFormData | BoothFormData | SponsorFormData,
-  formType: "individual" | "bulk" | "booth" | "sponsor",
+  formData: RegistrationFormData,
+  formType: RegistrationType,
   reference: string,
-  paymentMethod: "card" | "eft"
+  paymentMethod: PaymentMethod
 ) {
   try {
     // Create base registration first
@@ -93,97 +105,103 @@ export async function saveRegistrationToDatabase(
 
     // Based on form type, create specific registration
     switch (formType) {
-      case "individual":
-        if ("name" in formData) {
-          await prisma.individualRegistration.create({
-            data: {
-              baseRegistrationId: baseRegistration.id,
-              name: formData.name,
-              idNumber: formData.idNumber,
-              email: formData.email,
-              contactNumber: formData.contactNumber,
-              invoicingDetails: formData.invoicingDetails,
-              attendeeType: formData.attendeeType,
-              isMember: formData.isMember,
-              numberOfDays: formData.numberOfDays,
-              selectedDate: formData.selectedDate,
-              selectedPricing: formData.selectedPricing,
-            },
-          });
-        }
+      case "individual": {
+        const data = formData as IndividualFormData;
+        await prisma.individualRegistration.create({
+          data: {
+            baseRegistrationId: baseRegistration.id,
+            name: data.name,
+            idNumber: data.idNumber,
+            email: data.email,
+            contactNumber: data.contactNumber,
+            invoicingDetails: data.invoicingDetails,
+            attendeeType: data.attendeeType,
+            isMember: data.isMember,
+            numberOfDays: data.numberOfDays,
+            selectedDate: data.selectedDate,
+            selectedPricing: data.selectedPricing,
+          },
+        });
         break;
+      }
 
-      case "bulk":
-        if ("organizationType" in formData) {
-          await prisma.bulkRegistration.create({
-            data: {
-              baseRegistrationId: baseRegistration.id,
-              organizationType: formData.organizationType,
-              schoolName: formData.schoolName,
-              vatNumber: formData.vatNumber,
-              contactPersonName: formData.contactPersonName,
-              contactPersonEmail: formData.contactPersonEmail,
-              contactPersonPhone: formData.contactPersonPhone,
-              memberStudents: formData.memberStudents,
-              nonMemberStudents: formData.nonMemberStudents,
-              memberTeachers: formData.memberTeachers,
-              nonMemberTeachers: formData.nonMemberTeachers,
-              numberOfDays: formData.numberOfDays,
-              selectedDate: formData.selectedDate,
-            },
-          });
-        }
+      case "bulk": {
+        const data = formData as BulkFormData;
+        await prisma.bulkRegistration.create({
+          data: {
+            baseRegistrationId: baseRegistration.id,
+            organizationType: data.organizationType,
+            schoolName: data.schoolName,
+            vatNumber: data.vatNumber,
+            contactPersonName: data.contactPersonName,
+            contactPersonEmail: data.contactPersonEmail,
+            contactPersonPhone: data.contactPersonPhone,
+            memberStudents: data.memberStudents,
+            nonMemberStudents: data.nonMemberStudents,
+            memberTeachers: data.memberTeachers,
+            nonMemberTeachers: data.nonMemberTeachers,
+            numberOfDays: data.numberOfDays,
+            selectedDate: data.selectedDate,
+          },
+        });
         break;
+      }
 
-      case "booth":
-        if ("companyName" in formData && "exhibitorSize" in formData) {
-          await prisma.boothRegistration.create({
-            data: {
-              baseRegistrationId: baseRegistration.id,
-              exhibitorSize: formData.exhibitorSize,
-              educationOption: formData.educationOption,
-              industryOption: formData.industryOption,
-              exhibitorType: formData.exhibitorType,
-              companyName: formData.companyName,
-              companyAddress: formData.companyAddress,
-              companyEmail: formData.companyEmail,
-              companyContactNumber: formData.companyContactNumber,
-              companyVAT: formData.companyVAT,
-              companyContactPerson: formData.companyContactPerson,
-              priceBeforeVAT: formData.priceBeforeVAT,
-              vatAmount: formData.vatAmount,
-            },
-          });
-        }
+      case "booth": {
+        const data = formData as BoothFormData;
+        await prisma.boothRegistration.create({
+          data: {
+            baseRegistrationId: baseRegistration.id,
+            exhibitorSize: data.exhibitorSize,
+            educationOption: data.educationOption,
+            industryOption: data.industryOption,
+            exhibitorType: data.exhibitorType,
+            companyName: data.companyName,
+            companyAddress: data.companyAddress,
+            companyEmail: data.companyEmail,
+            companyContactNumber: data.companyContactNumber,
+            companyVAT: data.companyVAT,
+            companyContactPerson: data.companyContactPerson,
+            priceBeforeVAT: data.priceBeforeVAT,
+            vatAmount: data.vatAmount,
+          },
+        });
         break;
+      }
 
-      case "sponsor":
-        if ("sponsorshipType" in formData) {
-          await prisma.sponsorRegistration.create({
-            data: {
-              baseRegistrationId: baseRegistration.id,
-              sponsorshipType: formData.sponsorshipType,
-              competitionPantryType: formData.competitionPantryType,
-              partnerTier: formData.partnerTier,
-              companyName: formData.companyName,
-              companyAddress: formData.companyAddress,
-              companyEmail: formData.companyEmail,
-              companyContactNumber: formData.companyContactNumber,
-              companyVAT: formData.companyVAT,
-              companyContactPerson: formData.companyContactPerson,
-              basePrice: formData.basePrice,
-              discount: formData.discount,
-              priceBeforeVAT: formData.priceBeforeVAT,
-              vatAmount: formData.vatAmount,
-            },
-          });
-        }
+      case "sponsor": {
+        const data = formData as SponsorFormData;
+        await prisma.sponsorRegistration.create({
+          data: {
+            baseRegistrationId: baseRegistration.id,
+            sponsorshipType: data.sponsorshipType,
+            competitionPantryType: data.competitionPantryType,
+            partnerTier: data.partnerTier,
+            companyName: data.companyName,
+            companyAddress: data.companyAddress,
+            companyEmail: data.companyEmail,
+            companyContactNumber: data.companyContactNumber,
+            companyVAT: data.companyVAT,
+            companyContactPerson: data.companyContactPerson,
+            basePrice: data.basePrice,
+            discount: data.discount,
+            priceBeforeVAT: data.priceBeforeVAT,
+            vatAmount: data.vatAmount,
+          },
+        });
         break;
+      }
     }
 
     return baseRegistration;
   } catch (error) {
-    console.error("Failed to save registration:", error);
+    if (error instanceof Error) {
+      console.error("Failed to save registration:", error.message);
+    } else {
+      console.error("Failed to save registration:", error);
+    }
     throw error;
   }
 }
+
+export { prisma };
