@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { validateRegistrationData } from "@/utils/validation";
+import { saveRegistrationToDatabase } from "@/utils/database";
 
 // Individual registration data type
 interface IndividualFormData {
@@ -97,6 +98,10 @@ export default function Submit({
       }
 
       const reference = `REG-${Date.now()}`;
+
+      // Save to database first
+      await saveRegistrationToDatabase(formData, formType, reference, "card");
+
       const response = await fetch("/api/create-checkout-session", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -138,6 +143,10 @@ export default function Submit({
       }
 
       const reference = `REG-${Date.now()}`;
+
+      // Save to database first
+      await saveRegistrationToDatabase(formData, formType, reference, "eft");
+
       // Generate EFT instructions
       await sendFormDataEmail(formData, formType, "eft");
 

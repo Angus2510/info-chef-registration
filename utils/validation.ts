@@ -135,10 +135,14 @@ export const validateRegistrationData = (
 
     case "sponsor": {
       const formData = data as SponsorFormData;
+
+      // Check that either sponsorshipType OR competitionPantryType is selected, but not both
+      const hasValidSelection =
+        (!!formData.sponsorshipType && !formData.competitionPantryType) ||
+        (!formData.sponsorshipType && !!formData.competitionPantryType);
+
       return !!(
-        isValidString(formData.sponsorshipType) &&
-        isValidString(formData.competitionPantryType) &&
-        isValidString(formData.partnerTier) &&
+        hasValidSelection && // New validation check
         isValidString(formData.companyName) &&
         isValidString(formData.companyAddress) &&
         isValidString(formData.companyEmail) &&

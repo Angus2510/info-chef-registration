@@ -20,11 +20,23 @@ export default function SponsorRegistration() {
 
   // Handler functions for checkbox selections
   const handleSponsorshipTypeChange = (value: string) => {
-    setSponsorshipType((prevValue) => (prevValue === value ? "" : value));
+    if (sponsorshipType === value) {
+      setSponsorshipType("");
+    } else {
+      setSponsorshipType(value);
+      // Clear competition pantry selection if it exists
+      setCompetitionPantryType("");
+    }
   };
 
   const handleCompetitionPantryChange = (value: string) => {
-    setCompetitionPantryType((prevValue) => (prevValue === value ? "" : value));
+    if (competitionPantryType === value) {
+      setCompetitionPantryType("");
+    } else {
+      setCompetitionPantryType(value);
+      // Clear sponsorship type selection if it exists
+      setSponsorshipType("");
+    }
   };
 
   const handlePartnerTierChange = (value: string) => {
