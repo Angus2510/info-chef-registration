@@ -121,23 +121,27 @@ export const validateRegistrationData = (
     case "booth": {
       const formData = data as BoothFormData;
 
-      // Check if at least one option is selected and has valid company details
-      return !!(
-        // At least one exhibition option must be selected
-        (
-          (formData.exhibitorSize ||
-            formData.educationOption ||
-            formData.industryOption) &&
-          // Basic company details must be present
+      // More lenient validation after redirect
+      if (window.location.pathname.includes("/payment/success")) {
+        return !!(
           formData.companyName &&
-          formData.companyAddress &&
           formData.companyEmail &&
-          formData.companyContactNumber &&
-          formData.companyVAT &&
-          formData.companyContactPerson &&
-          // Price must be greater than 0
           formData.totalPrice > 0
-        )
+        );
+      }
+
+      // Strict validation for initial submission
+      return !!(
+        (formData.exhibitorSize ||
+          formData.educationOption ||
+          formData.industryOption) &&
+        formData.companyName &&
+        formData.companyAddress &&
+        formData.companyEmail &&
+        formData.companyContactNumber &&
+        formData.companyVAT &&
+        formData.companyContactPerson &&
+        formData.totalPrice > 0
       );
     }
 
