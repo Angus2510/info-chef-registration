@@ -316,43 +316,44 @@ export default function Submit({
 
       {/* Payment Buttons */}
       <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-        {!disablePayment ? (
+        {!disablePayment && (
           <button
             onClick={handlePayNow}
             disabled={isProcessing}
             className="bg-green-600 text-white py-3 px-8 rounded-md hover:bg-green-700 
-                text-lg font-medium disabled:bg-gray-400 disabled:cursor-not-allowed
-                flex items-center justify-center min-w-[200px]"
+              text-lg font-medium disabled:bg-gray-400 disabled:cursor-not-allowed
+              flex items-center justify-center min-w-[200px]"
           >
             {isProcessing ? "Processing..." : "Pay Now with Card"}
           </button>
-        ) : (
-          <div className="text-gray-600 italic bg-gray-100 px-4 py-2 rounded-md">
-            Card payment disabled - Partner tier selected
-          </div>
         )}
 
-        <button
-          onClick={handlePayLater}
-          disabled={isProcessing}
-          className="bg-blue-600 text-white py-3 px-8 rounded-md hover:bg-blue-700 
+        {/* Show EFT button only for non-individual registrations */}
+        {formType !== "individual" && (
+          <button
+            onClick={handlePayLater}
+            disabled={isProcessing}
+            className="bg-blue-600 text-white py-3 px-8 rounded-md hover:bg-blue-700 
               text-lg font-medium disabled:bg-gray-400 disabled:cursor-not-allowed
               flex items-center justify-center min-w-[200px]"
-        >
-          Pay Later with EFT
-        </button>
+          >
+            Pay Later with EFT
+          </button>
+        )}
       </div>
 
       {/* Payment Instructions */}
-      <div className="text-sm text-gray-600 text-center mt-4">
-        <p>
-          For EFT payments, banking details will be sent to your registered
-          email address.
-        </p>
-        <p className="mt-2">
-          Your registration will be confirmed once payment is received.
-        </p>
-      </div>
+      {formType !== "individual" && (
+        <div className="text-sm text-gray-600 text-center mt-4">
+          <p>
+            For EFT payments, banking details will be sent to your registered
+            email address.
+          </p>
+          <p className="mt-2">
+            Your registration will be confirmed once payment is received.
+          </p>
+        </div>
+      )}
     </div>
   );
 }
