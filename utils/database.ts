@@ -1,18 +1,5 @@
 "use server";
-import { PrismaClient } from "@prisma/client";
-
-// Extend NodeJS.Global to include prisma property
-declare global {
-  // eslint-disable-next-line no-var
-  var prisma: PrismaClient | undefined;
-}
-
-// Create a single instance of PrismaClient for the entire app
-const prisma = global.prisma || new PrismaClient();
-
-if (process.env.NODE_ENV !== "production") {
-  global.prisma = prisma;
-}
+import prisma from "./prisma";
 
 interface IndividualFormData {
   name: string;
@@ -203,5 +190,3 @@ export async function saveRegistrationToDatabase(
     throw error;
   }
 }
-
-export { prisma };
