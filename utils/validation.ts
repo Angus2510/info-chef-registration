@@ -120,7 +120,17 @@ export const validateRegistrationData = (
 
     case "booth": {
       const formData = data as BoothFormData;
+
+      // Check that at least one exhibition option is selected AND price is greater than 0
+      const hasValidExhibition = !!(
+        (formData.exhibitorSize ||
+          formData.educationOption ||
+          formData.industryOption) &&
+        formData.priceBeforeVAT > 0
+      );
+
       return !!(
+        hasValidExhibition &&
         isValidString(formData.companyName) &&
         isValidString(formData.companyAddress) &&
         isValidString(formData.companyEmail) &&

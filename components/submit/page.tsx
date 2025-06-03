@@ -41,7 +41,7 @@ interface BoothFormData {
   exhibitorSize?: "2sqm" | "4sqm" | "6sqm" | "";
   educationOption?: string;
   industryOption?: string;
-  exhibitorType?: string; // Make it optional and accept any string
+
   companyName: string;
   companyAddress: string;
   companyEmail: string;
