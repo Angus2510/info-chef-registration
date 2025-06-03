@@ -121,53 +121,45 @@ export const validateRegistrationData = (
     case "booth": {
       const formData = data as BoothFormData;
 
-      // Check that at least one exhibition option is selected AND price is greater than 0
-      const hasValidExhibition = !!(
-        (formData.exhibitorSize ||
-          formData.educationOption ||
-          formData.industryOption) &&
-        formData.priceBeforeVAT > 0
-      );
-
+      // Check if at least one option is selected and has valid company details
       return !!(
-        hasValidExhibition &&
-        isValidString(formData.companyName) &&
-        isValidString(formData.companyAddress) &&
-        isValidString(formData.companyEmail) &&
-        isValidString(formData.companyContactNumber) &&
-        isValidString(formData.companyVAT) &&
-        isValidString(formData.companyContactPerson) &&
-        isValidNumber(formData.priceBeforeVAT) &&
-        isValidNumber(formData.vatAmount) &&
-        isValidNumber(formData.totalPrice)
+        // At least one exhibition option must be selected
+        (
+          (formData.exhibitorSize ||
+            formData.educationOption ||
+            formData.industryOption) &&
+          // Basic company details must be present
+          formData.companyName &&
+          formData.companyAddress &&
+          formData.companyEmail &&
+          formData.companyContactNumber &&
+          formData.companyVAT &&
+          formData.companyContactPerson &&
+          // Price must be greater than 0
+          formData.totalPrice > 0
+        )
       );
     }
 
     case "sponsor": {
       const formData = data as SponsorFormData;
 
-      // Check that either sponsorshipType OR competitionPantryType is selected, but not both
-      const hasValidSelection =
-        (!!formData.sponsorshipType && !formData.competitionPantryType) ||
-        (!formData.sponsorshipType && !!formData.competitionPantryType);
-
+      // Check if sponsor type is selected and has valid company details
       return !!(
-        hasValidSelection && // New validation check
-        isValidString(formData.companyName) &&
-        isValidString(formData.companyAddress) &&
-        isValidString(formData.companyEmail) &&
-        isValidString(formData.companyContactNumber) &&
-        isValidString(formData.companyVAT) &&
-        isValidString(formData.companyContactPerson) &&
-        isValidNumber(formData.basePrice) &&
-        isValidNumber(formData.discount) &&
-        isValidNumber(formData.priceBeforeVAT) &&
-        isValidNumber(formData.vatAmount) &&
-        isValidNumber(formData.totalPrice)
+        // At least one sponsorship type must be selected
+        (
+          (formData.sponsorshipType || formData.competitionPantryType) &&
+          // Basic company details must be present
+          formData.companyName &&
+          formData.companyAddress &&
+          formData.companyEmail &&
+          formData.companyContactNumber &&
+          formData.companyVAT &&
+          formData.companyContactPerson &&
+          // Price must be greater than 0
+          formData.totalPrice > 0
+        )
       );
     }
-
-    default:
-      return false;
   }
 };
