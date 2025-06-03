@@ -1,6 +1,15 @@
 "use server";
 import { PrismaClient } from "@prisma/client";
 
+// Prevent multiple instances of Prisma Client in development
+const globalForPrisma = globalThis as unknown as {
+  prisma: PrismaClient | undefined;
+};
+
+export const prisma = globalForPrisma.prisma ?? new PrismaClient();
+
+if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+
 interface IndividualFormData {
   name: string;
   idNumber: string;
@@ -63,8 +72,6 @@ interface SponsorFormData {
   vatAmount: number;
   totalPrice: number;
 }
-
-const prisma = new PrismaClient();
 
 export async function saveRegistrationToDatabase(
   formData: IndividualFormData | BulkFormData | BoothFormData | SponsorFormData,
