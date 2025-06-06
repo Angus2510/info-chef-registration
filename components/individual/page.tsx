@@ -406,7 +406,7 @@ export default function IndividualRegistration() {
                     className="mr-2"
                     required
                   />
-                  <span>30 2025</span>
+                  <span>30 July 2025</span>
                 </label>
               </div>
             </div>
