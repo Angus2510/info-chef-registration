@@ -93,7 +93,7 @@ export default function BulkRegistration() {
       nonMemberTeachers,
       numberOfDays,
       selectedDate:
-        numberOfDays === "one" ? `${selectedDate} May 2025` : "Both days",
+        numberOfDays === "one" ? `${selectedDate} July 2025` : "Both days",
       totalPrice,
     });
     alert("Bulk registration submitted successfully!");
@@ -520,7 +520,7 @@ export default function BulkRegistration() {
                         className="mr-2"
                         required
                       />
-                      <span>29 May 2025</span>
+                      <span>29 July 2025</span>
                     </label>
                     <label className="flex items-center">
                       <input
@@ -532,7 +532,7 @@ export default function BulkRegistration() {
                         className="mr-2"
                         required
                       />
-                      <span>30 May 2025</span>
+                      <span>30 July 2025</span>
                     </label>
                   </div>
                 </div>
@@ -629,7 +629,7 @@ export default function BulkRegistration() {
                   {numberOfDays === "two"
                     ? "two days"
                     : selectedDate
-                    ? `${selectedDate} May 2025`
+                    ? `${selectedDate} July 2025`
                     : "one day"}
                   )
                 </span>
@@ -658,7 +658,9 @@ export default function BulkRegistration() {
               nonMemberTeachers,
               numberOfDays,
               selectedDate:
-                numberOfDays === "one" ? `${selectedDate} May 2025` : undefined,
+                numberOfDays === "one"
+                  ? `${selectedDate} July 2025`
+                  : undefined,
               totalPrice,
             }}
             totalPrice={totalPrice}

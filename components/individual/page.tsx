@@ -129,7 +129,7 @@ export default function IndividualRegistration() {
       isMember,
       numberOfDays,
       selectedDate:
-        numberOfDays === "one" ? `${selectedDate} May 2025` : "Both days",
+        numberOfDays === "one" ? `${selectedDate} July 2025` : "Both days",
       selectedPricing,
       totalPrice,
     });
@@ -394,7 +394,7 @@ export default function IndividualRegistration() {
                     className="mr-2"
                     required
                   />
-                  <span>29 May 2025</span>
+                  <span>29 July 2025</span>
                 </label>
                 <label className="flex items-center">
                   <input
@@ -406,7 +406,7 @@ export default function IndividualRegistration() {
                     className="mr-2"
                     required
                   />
-                  <span>30 May 2025</span>
+                  <span>30 2025</span>
                 </label>
               </div>
             </div>
@@ -522,7 +522,7 @@ export default function IndividualRegistration() {
               numberOfDays,
               selectedDate:
                 numberOfDays === "one"
-                  ? `${selectedDate} May 2025`
+                  ? `${selectedDate} July 2025`
                   : "Both days",
               selectedPricing,
               totalPrice,
