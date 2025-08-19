@@ -41,7 +41,7 @@ export default function Home() {
         <div className="max-w-4xl w-full">
           <div className="bg-white p-12 rounded-2xl shadow-2xl text-center">
             <h1 className="text-4xl md:text-6xl font-bold text-[#243d8e] mb-4">
-              INFO CHEFS 2026
+              InfoChef 2026
             </h1>
             <h2 className="text-2xl md:text-3xl text-gray-700 mb-6">
               Coming Soon
